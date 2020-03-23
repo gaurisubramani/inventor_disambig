@@ -23,33 +23,17 @@ package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 import cc.factorie.app.nlp.lexicon.StopWords
 import edu.umass.cs.iesl.inventor_disambiguation._
 
-class Patent extends PatentsViewRecord {
- 
-  val patentType = StringSlot("patentType")
-  val number = StringSlot("number")
-  val country = StringSlot("country")
-  val date = StringSlot("date")
-  val patentAbstract = StringSlot("patentAbstract")
+class Patent extends ApplicationViewRecord {
+
   val title = StringSlot("title")
-  val kind = StringSlot("kind")
-  val numClaims = StringSlot("numClaims")
-  val filename = StringSlot("filename")
 
   lazy val tokenizedTitleWithoutStopwords: Iterable[String] = title.opt.map(_.removePunctuation.split(" ").toIndexedSeq.filterNot(StopWords.containsWord)).getOrElse(Iterable[String]())
   lazy val tokenizedTitleWithoutStopwordsCounts = tokenizedTitleWithoutStopwords.counts
 
-  def this(patentID: String, patentType: String, number: String, country: String, date: String, patentAbstract: String, title: String, kind: String, numClaims: String, filename: String) = {
+  def this(applicationNumber: String, title: String) = {
     this()
-    this.patentID.set(patentID)
-    this.patentType.set(patentType)
-    this.number.set(number)
-    this.country.set(country)
-    this.date.set(date)
-    this.patentAbstract.set(patentAbstract)
+    this.applicationNumber.set(applicationNumber)
     this.title.set(title)
-    this.kind.set(kind)
-    this.numClaims.set(numClaims)
-    this.filename.set(filename)
  }
 
 }

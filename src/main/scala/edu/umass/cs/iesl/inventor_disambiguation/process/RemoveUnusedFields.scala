@@ -22,7 +22,7 @@ package edu.umass.cs.iesl.inventor_disambiguation.process
 
 import java.io.{PrintWriter, File}
 
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{USPC, NBER, IPCR, CPC}
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.USPC
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures._
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference.InventorMention
 import edu.umass.cs.iesl.inventor_disambiguation.load.LoadJSONInventorMentions
@@ -36,13 +36,10 @@ object RemoveUnusedFields {
 
   def reduce(im: InventorMention) = {
     val reduced = new InventorMention()
-    reduced.uuid.set(im.uuid.value)
+    reduced.applicationNumber.set(im.applicationNumber.value)
     reduced.assignees.set(im.assignees.opt.getOrElse(Seq()).map(a => reduceAssignee(a)))
     reduced.coInventors.set(im.coInventors.opt.getOrElse(Seq()).map(c => reduceCoInventor(c)))
-    reduced.cpc.set(im.cpc.opt.getOrElse(Seq()).map(c => reduceCPC(c)))
-    reduced.ipcr.set(im.ipcr.opt.getOrElse(Seq()).map(i => reduceIPCR(i)))
     reduced.lawyers.set(im.lawyers.opt.getOrElse(Seq()).map(i => reduceLawyer(i)))
-    reduced.nber.set(im.nber.opt.getOrElse(Seq()).map(n => reduceNBER(n)))
     reduced.patent.set(reducePatent(im.patent.value))
     reduced.self.set(reduceSelf(im.self.value))
     reduced.uspc.set(im.uspc.opt.getOrElse(Seq()).map(n => reduceUSPC(n)))
@@ -52,8 +49,6 @@ object RemoveUnusedFields {
   def reduceAssignee(a: Assignee) = {
     val reduced = new Assignee()
     reduced.organization.set(a.organization.opt)
-    reduced.nameFirst.set(a.nameFirst.opt)
-    reduced.nameLast.set(a.nameLast.opt)
     reduced
   }
 
@@ -64,31 +59,19 @@ object RemoveUnusedFields {
     reduced
   }
 
-  def reduceCPC(cpc: CPC) = {
-    val reduced = new CPC()
-    reduced.sectionID.set(cpc.sectionID.opt)
-    reduced.subsectionID.set(cpc.subsectionID.opt)
-    reduced
-  }
-
-  def reduceIPCR(ipcr: IPCR) = {
-    val reduced = new IPCR()
-    reduced.classificationLevel.set(ipcr.classificationLevel.opt)
-    reduced.ipcClass.set(ipcr.ipcClass.opt)
-    reduced.section.set(ipcr.section.opt)
-  }
-
   def reduceLawyer(lawyer: Lawyer) = {
     val reduced = new Lawyer()
-    reduced.nameFirst.set(lawyer.nameFirst.opt)
-    reduced.nameLast.set(lawyer.nameLast.opt)
-    reduced
-  }
 
-  def reduceNBER(nber: NBER) = {
-    val reduced = new NBER()
-    reduced.categoryID.set(nber.categoryID.opt)
-    reduced.subcategoryID.set(nber.subcategoryID.opt)
+    reduced.country.set(lawyer.country.opt)
+    reduced.nameLine1.set(lawyer.nameLine1.opt)
+    reduced.nameLine2.set(lawyer.nameLine2.opt)
+    reduced.streetLine1.set(lawyer.streetLine1.opt)
+    reduced.streetLine2.set(lawyer.streetLine2.opt)
+    reduced.city.set(lawyer.city .opt)
+    reduced.postalCode.set(lawyer.postalCode.opt)
+    reduced.regionCode.set(lawyer.regionCode.opt)
+    reduced.countryCode.set(lawyer.countryCode.opt)
+    reduced.countryName.set(lawyer.countryName.opt)
     reduced
   }
 
@@ -100,22 +83,18 @@ object RemoveUnusedFields {
 
   def reduceSelf(self: Inventor) = {
     val reduced = new Inventor()
-    reduced.uuid.set(self.uuid.opt)
-    reduced.inventorID.set(self.inventorID.opt)
-    if (self.location.isDefined)
-      reduced.location.set(reduceLocation(self.location.value))
+    reduced.applicationNumber.set(self.applicationNumber.opt)
     reduced.nameFirst.set(self.nameFirst.opt)
     reduced.nameLast.set(self.nameLast.opt)
     reduced.nameMiddles.set(self.nameMiddles.opt)
-    reduced.nameLast.set(self.nameLast.opt)
     reduced
   }
 
   def reduceLocation(location: Location) = {
     val reduced = new Location()
-    reduced.city.set(location.city.opt)
     reduced.state.set(location.state.opt)
-    reduced.country.set(location.country.opt)
+    reduced.countryCode.set(location.countryCode.opt)
+    reduced.countryName.set(location.countryName.opt)
     reduced
   }
 

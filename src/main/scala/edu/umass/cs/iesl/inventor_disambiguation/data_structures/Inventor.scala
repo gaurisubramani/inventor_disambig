@@ -20,40 +20,17 @@
 
 package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
-class Inventor extends PatentsViewRecord with PersonName {
-  
-  val uuid = StringSlot("uuid")
-  val rawLocationID = StringSlot("rawLocationID") 
-  val sequence = StringSlot("sequence")
-  lazy val sequenceInt = sequence.value.toInt
+class Inventor extends ApplicationViewRecord with PersonName {
 
-  // Not in the Inventor Table Schema
-  val location = CubbieSlot[Location]("location", () => new Location())
-  
-  val inventorID = StringSlot("inventorID")
-
-  def this(uuid: String, patentID: String, rawLocationID: String, nameFirst: String, nameLast: String, sequence: String) = {
+  def this(applicationNumber: String, nameFirst: String, nameMiddles: String, nameLast: String) = {
     this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
-    this.rawLocationID.set(rawLocationID)
+    this.applicationNumber.set(applicationNumber)
     this.nameFirst.set(nameFirst)
+    this.nameMiddles.set(Seq(nameMiddles))
     this.nameLast.set(nameLast)
-    this.sequence.set(sequence)
-    this.inventorID.set(patentID + "-" + sequence)
-  }
-  def this(uuid: String, patentID: String, rawLocationID: Option[String], nameFirst: Option[String], nameLast: Option[String], sequence: String) = {
-    this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
-    this.rawLocationID.set(rawLocationID)
-    this.nameFirst.set(nameFirst)
-    this.nameLast.set(nameLast)
-    this.sequence.set(sequence)
-    this.inventorID.set(patentID + "-" + sequence)
   }
 
-  def debugString() = Iterable(this.inventorID.opt.getOrElse("*NULL*"),this.nameLast.opt.getOrElse("*NULL*"),this.nameFirst.opt.getOrElse("*NULL*"),this.nameMiddles.opt.getOrElse(Seq()).mkString(" "),this.nameSuffixes.opt.getOrElse(Seq()).mkString(" "),location.opt.map(_.debugString()).getOrElse("")).mkString("\t")
+  def debugString() = Iterable(this.applicationNumber.opt.getOrElse("*NULL*"),this.nameLast.opt.getOrElse("*NULL*"),this.nameFirst.opt.getOrElse("*NULL*"),this.nameMiddles.opt.getOrElse(Seq()).mkString(" "),this.nameSuffixes.opt.getOrElse(Seq()).mkString(" ")).mkString("\t")
 }
 
 object Inventor extends Inventor

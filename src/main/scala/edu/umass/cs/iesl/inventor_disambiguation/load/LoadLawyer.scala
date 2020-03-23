@@ -25,23 +25,22 @@ import edu.umass.cs.iesl.inventor_disambiguation.data_structures.Lawyer
 
 object LoadLawyer extends TabSeparatedFileLoader[Lawyer]{
   override def parse(split: Array[String]): Option[Lawyer] = {
-    val uuid = split(0).clean().noneIfEmpty
-    // TODO: Add this field to the Lawyer class
-    //val laywer_id = split(1).clean().noneIfEmpty
-    val patent_id = split(2).clean().noneIfEmpty
-    val first = split(3).clean().noneIfNAorBlank
-    val last = split(4).clean().noneIfNAorBlank
-    // TODO: Add this field to the Lawyer class
-    //val organization = split(5).clean().noneIfEmpty
-    val country = split(6).clean().noneIfNAorBlank
-    val sequence = split(7).clean().noneIfEmpty
-    if (first.isDefined || last.isDefined)
-      Some(new Lawyer(uuid.get,patent_id.get,sequence.get,first,last,country))
-    else
-      None
+
+    val applicationNumber = split(0).clean()
+    val nameLine1 = split(1).clean()
+    val nameLine2 = split(2).clean()
+    val streetLine1 = split(3).clean()
+    val streetLine2 = split(4).clean()
+    val city = split(5).clean()
+    val postalCode = split(6).clean()
+    val regionCode = split(7).clean()
+    val countryCode = split(8).clean()
+    val countryName = split(9).clean()
+
+    Some(new Lawyer(applicationNumber, nameLine1, nameLine2, streetLine1, streetLine2, city, postalCode, regionCode, countryCode, countryName))
   }
 
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(8)
+  override def expectedLineLengths: Set[Int] = Set(11)
 }

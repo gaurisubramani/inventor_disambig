@@ -91,9 +91,9 @@ trait ParallelCoreference {
   }
   
   def gatherResults(mentions: Iterable[InventorMention]): Iterable[BasicCorefOutputRecord] = {
-    mentions.groupBy(_.entityId.value).map(f => {
+    mentions.groupBy(_.applicationNumber.value).map(f => {
       val (firstName,middleName,lastName,suffix) = determineNames(f._2,0.8,0.8)
-      f._2.map(m => BasicCorefOutputRecord(m.uuid.value,m.self.value.uuid.value,m.entityId.value,firstName,middleName,lastName,suffix))
+      f._2.map(m => BasicCorefOutputRecord(m.applicationNumber.value,m.self.value.applicationNumber.value,m.applicationNumber.value,firstName,middleName,lastName,suffix))
     }).flatten
   }
   
@@ -248,13 +248,15 @@ case class BasicCorefOutputRecord(mentionId: String,
 
 object BasicCorefOutputRecord {
 
+  //GSTODO: what is the correct inventorId here?  For now, using mentionId {val Array(patentId,seq) = mentionId.split("-"); s"$patentId-${seq.toInt+1}"}
+
   def apply(mentionId: String,
             rawInventorId: String,
             rawDisambiguatedId: String,
             firstName: String,
             middleName: String,
             lastName: String,
-            suffixes: String):BasicCorefOutputRecord = BasicCorefOutputRecord(mentionId,{val Array(patentId,seq) = mentionId.split("-"); s"$patentId-${seq.toInt+1}"},rawInventorId,rawDisambiguatedId,firstName,middleName,lastName,suffixes)
+            suffixes: String):BasicCorefOutputRecord = BasicCorefOutputRecord(mentionId,mentionId,rawInventorId,rawDisambiguatedId,firstName,middleName,lastName,suffixes)
 }
 
 

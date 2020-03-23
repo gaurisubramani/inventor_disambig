@@ -71,25 +71,10 @@ object InventorCorefModel {
     if(opts.bagLawyersEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagLawyersEntropy.value, {b:InventorVars => b.lawyers}, "Lawyers")
     if(opts.bagLawyersPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagLawyersPrior.value, {b:InventorVars => b.lawyers}, "Lawyers")
 
-    // CPC
-    if(opts.bagCPCsWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagCPCsWeight.value,opts.bagCPCsShift.value, {b:InventorVars => b.cpc}, "cpcs")
-    if(opts.bagCPCsEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagCPCsEntropy.value, {b:InventorVars => b.cpc}, "cpcs")
-    if(opts.bagCPCsPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagCPCsPrior.value, {b:InventorVars => b.cpc}, "cpcs")
-
-    // IPCR
-    if(opts.bagIPCRsWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagIPCRsWeight.value,opts.bagIPCRsShift.value, {b:InventorVars => b.ipcr}, "IPCRs")
-    if(opts.bagIPCRsEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagIPCRsEntropy.value, {b:InventorVars => b.ipcr}, "IPCRs")
-    if(opts.bagIPCRsPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagIPCRsPrior.value, {b:InventorVars => b.ipcr}, "IPCRs")
-        
     // USPC
     if(opts.bagUSPCsWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagUSPCsWeight.value,opts.bagUSPCsShift.value, {b:InventorVars => b.uspc}, "USPCs")
     if(opts.bagUSPCsEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagUSPCsEntropy.value, {b:InventorVars => b.uspc}, "USPCs")
     if(opts.bagUSPCsPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagUSPCsPrior.value, {b:InventorVars => b.uspc}, "USPCs")
-    
-    // NBER
-    if(opts.bagNBERsWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagNBERsWeight.value,opts.bagNBERsShift.value, {b:InventorVars => b.nber}, "NBERs")
-    if(opts.bagNBERsEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagNBERsEntropy.value, {b:InventorVars => b.nber}, "NBERs")
-    if(opts.bagNBERsPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagNBERsPrior.value, {b:InventorVars => b.nber}, "NBERs")
 
     inventorCorefModel
   }

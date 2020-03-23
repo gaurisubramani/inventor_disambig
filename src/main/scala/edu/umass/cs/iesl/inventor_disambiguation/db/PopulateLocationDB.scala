@@ -42,7 +42,7 @@ class LocationDB(override val hostname: String, override val  port: Int, overrid
    * @param cubbie
    * @return
    */
-  override def indices(cubbie: Location): Seq[Seq[Location#AbstractSlot[Any]]] = Seq(Seq(cubbie.locationID))
+  override def indices(cubbie: Location): Seq[Seq[Location#AbstractSlot[Any]]] = Seq(Seq(cubbie.applicationNumber))
 
   /**
    * Create an empty location 
@@ -55,7 +55,7 @@ class LocationDB(override val hostname: String, override val  port: Int, overrid
    * @param key the key of interest
    * @return the values
    */
-  override def get(key: String): Iterable[Location] = db.query(q => q.locationID.set(key)).limit(1).toIterable
+  override def get(key: String): Iterable[Location] = db.query(q => q.applicationNumber.set(key)).limit(1).toIterable
 
 }
 

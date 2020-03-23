@@ -21,27 +21,18 @@
 package edu.umass.cs.iesl.inventor_disambiguation.load
 
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures._
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.citations.USPatentCitation
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{USPC, IPCR, NBER, CPC}
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.USPC
 
 
 object Loaders {
   
   def apply(name: String) = name match {
 
-    case Application.name => LoadApplication
     case Assignee.name => LoadAssignee
-    case Claim.name => LoadClaim
-    case CPC.name => LoadCPC
     case Inventor.name => LoadInventor
-    case IPCR.name => LoadIPCR
     case Lawyer.name => LoadLawyer
     case Location.name => LoadLocation
-    case NBER.name => LoadNBER
     case Patent.name => LoadPatent
-    case USPatentCitation.name => LoadUSPatentCitation
     case USPC.name => LoadUSPC
   }
-  
-
 }

@@ -6,7 +6,7 @@ START=$(date +%s)
 
 echo "Starting Mongo Server on port 27972 at $START_TIME"
 mkdir -p data/mongodb/patentsview_data
-numactl --interleave=all mongod --port 27972 --dbpath data/mongodb/patentsview_data
+mongod --port 27972 --dbpath data/mongodb/patentsview_data
 
 
 END=$(date +%s)

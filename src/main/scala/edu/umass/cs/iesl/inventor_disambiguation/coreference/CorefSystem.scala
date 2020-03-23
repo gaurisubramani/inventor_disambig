@@ -25,7 +25,7 @@ import java.io.{File, PrintWriter}
 import cc.factorie.app.nlp.hcoref._
 import cc.factorie.util.{BasicEvaluatableClustering, EvaluatableClustering}
 import edu.umass.cs.iesl.inventor_disambiguation._
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.PatentsViewRecord
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.ApplicationViewRecord
 import edu.umass.cs.iesl.inventor_disambiguation.evaluation.EvaluateCoreference
 
 /**
@@ -36,7 +36,7 @@ import edu.umass.cs.iesl.inventor_disambiguation.evaluation.EvaluateCoreference
  * and disambiguated with a HierarchicalCorefSystem. 
  * @tparam MentionType The datatype of the mentions, must be subclass of PatentsViewRecord
  */
-trait CoreferenceAlgorithm[MentionType <: PatentsViewRecord] {
+trait CoreferenceAlgorithm[MentionType <: ApplicationViewRecord] {
 
   /**
    * The name of the algorithm
@@ -72,7 +72,7 @@ trait CoreferenceAlgorithm[MentionType <: PatentsViewRecord] {
  * Allows mentions to be looked up with some IDs 
  * @tparam MentionType
  */
-trait IndexableMentions[MentionType <: PatentsViewRecord] {
+trait IndexableMentions[MentionType <: ApplicationViewRecord] {
   def getMention(id: String): MentionType
 }
 
@@ -80,7 +80,7 @@ trait IndexableMentions[MentionType <: PatentsViewRecord] {
  * Code to run and evaluate with a gold labeling 
  * @tparam MentionType
  */
-trait ExperimentWithGroundTruth[MentionType <: PatentsViewRecord]  {
+trait ExperimentWithGroundTruth[MentionType <: ApplicationViewRecord]  {
 
   val algorithm: CoreferenceAlgorithm[MentionType] with IndexableMentions[MentionType]
 

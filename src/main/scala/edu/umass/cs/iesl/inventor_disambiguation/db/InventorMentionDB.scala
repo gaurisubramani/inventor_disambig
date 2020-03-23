@@ -24,7 +24,7 @@ import java.io.File
 
 import cc.factorie.util.Threading
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures._
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{CPC, IPCR, NBER, USPC}
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.USPC
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference.InventorMention
 import edu.umass.cs.iesl.inventor_disambiguation.load.LoadInventor
 
@@ -53,7 +53,7 @@ class InventorMentionDB(override val hostname: String,
    * @param cubbie
    * @return
    */
-  override def indices(cubbie: InventorMention): Seq[Seq[InventorMention#AbstractSlot[Any]]] = Seq(Seq(cubbie.uuid))
+  override def indices(cubbie: InventorMention): Seq[Seq[InventorMention#AbstractSlot[Any]]] = Seq(Seq(cubbie.applicationNumber))
 
   /**
    * One might have multiple indices on this table, for this reason, the class itself does not implement the datastore method
@@ -63,7 +63,7 @@ class InventorMentionDB(override val hostname: String,
    */
   def toDatastoreByUUID = new Datastore[String,InventorMention] {
     override def get(key: String): Iterable[InventorMention] = {
-      db.query(q => q.uuid.set(key)).limit(1).toIterable
+      db.query(q => q.applicationNumber.set(key)).limit(1).toIterable
     }
   }
 }
@@ -116,16 +116,8 @@ object CreateInventorMentionDB {
       override def constructor(): Assignee = new Assignee()
     }
 
-    val cpcDB = new GeneralPatentDB[CPC](opts.hostname.value, opts.port.value, opts.dbname.value, opts.cpcCollectionName.value, true) {
-      override def constructor(): CPC = new CPC()
-    }
-    
     val inventorDB = new GeneralPatentDB[Inventor](opts.hostname.value, opts.port.value, opts.dbname.value, opts.inventorCollectionName.value, true) {
       override def constructor(): Inventor = new Inventor()
-    }
-    
-    val ipcrDB = new GeneralPatentDB[IPCR](opts.hostname.value, opts.port.value, opts.dbname.value, opts.ipcrCollectionName.value, true) {
-      override def constructor(): IPCR = new IPCR()
     }
     
     val lawyerDB = new GeneralPatentDB[Lawyer](opts.hostname.value, opts.port.value, opts.dbname.value, opts.lawyerCollectionName.value, true) {
@@ -133,10 +125,6 @@ object CreateInventorMentionDB {
     }
 
     val locationDB = new LocationDB(opts.hostname.value, opts.port.value, opts.dbname.value, opts.locationCollectionName.value, true)
-
-    val nberDB = new GeneralPatentDB[NBER](opts.hostname.value, opts.port.value, opts.dbname.value, opts.nberCollectionName.value, true) {
-      override def constructor(): NBER = new NBER()
-    }
 
     val patentDB = new GeneralPatentDB[Patent](opts.hostname.value, opts.port.value, opts.dbname.value, opts.patentCollectionName.value, true) {
       override def constructor(): Patent = new Patent()
@@ -151,7 +139,7 @@ object CreateInventorMentionDB {
     
     inventorsPar.par.foreach(
      inventors => {
-       val inventorMentions = inventors.map(inventor => InventorMention.fromDatastores(inventor, assigneeDB, cpcDB, inventorDB, ipcrDB, lawyerDB, locationDB, nberDB, patentDB, uspcDB))
+       val inventorMentions = inventors.map(inventor => InventorMention.fromDatastores(inventor, assigneeDB, inventorDB, lawyerDB, locationDB, patentDB, uspcDB))
        db.bufferedInsert(inventorMentions, opts.bufferSize.value)
      }
     )

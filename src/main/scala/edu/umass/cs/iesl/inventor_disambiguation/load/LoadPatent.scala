@@ -21,12 +21,13 @@
 package edu.umass.cs.iesl.inventor_disambiguation.load
 
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.Patent
+import edu.umass.cs.iesl.inventor_disambiguation._
 
 object LoadPatent extends TabSeparatedFileLoader[Patent]{
   override def parse(split: Array[String]): Option[Patent] =
-    Some(new Patent(split(0),split(1),split(2),split(3),split(4),split(5),split(6),split(7),split(8),split(9)))
+    Some(new Patent(split(0).clean(),split(1).clean()))
 
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(10)
+  override def expectedLineLengths: Set[Int] = Set(3)
 }

@@ -25,24 +25,15 @@ import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.
 import edu.umass.cs.iesl.inventor_disambiguation._
 
 object LoadUSPC extends TabSeparatedFileLoader[USPC]{
-  
-  //uuid    patent_id       mainclass_id    subclass_id     sequence
   override def parse(split: Array[String]): Option[USPC] = {
     val cleaned = split.map(_.clean().noneIfEmpty)
-    val uuid = cleaned(0).get
-    val patentID = cleaned(1).get
-    val mainClass = cleaned(2)
-    val subclassId = cleaned(3)
-    val sequence = cleaned(4).get
-    if (mainClass.isDefined || subclassId.isDefined)
-      Some(new USPC(uuid,patentID,mainClass,subclassId,sequence))
-    else {
-      println(s"[${this.getClass.conventionalName}] WARNING: USPC record doesn't have main class nor subclass: ${split.mkString("[",", ", "]")}")
-      None
-    }
+    val applicationNumber = split(0).clean().noneIfNAorBlank.get
+    val mainClass = split(1).clean()
+    val subclassId = split(2).clean()
+    Some(new USPC(applicationNumber, mainClass, subclassId))
   }
 
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(5)
+  override def expectedLineLengths: Set[Int] = Set(4)
 }

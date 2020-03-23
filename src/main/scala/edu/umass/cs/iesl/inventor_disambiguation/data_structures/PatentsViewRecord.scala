@@ -30,12 +30,12 @@ import edu.umass.cs.iesl.inventor_disambiguation._
  * in this project extent PatentsViewRecord and in so doing, Cubbie. This allows them to 
  * be easily loaded into and out of MongoDBs 
  */
-class PatentsViewRecord extends Cubbie{
+class ApplicationViewRecord extends Cubbie{
 
   /**
-   * Every PatentsViewRecord has a patentID 
+   * Every ApplicationViewRecord has an application number
    */
-  val patentID = new StringSlot("patentID")
+  val applicationNumber = new StringSlot("application_number")
 
   /**
    * Every class that is a descendant of PatentsViewRecord has a name, which is a cleaned version of its class name. 

@@ -24,7 +24,7 @@ import java.io.{PrintWriter, File}
 
 import cc.factorie.app.nlp.hcoref.Mention
 import edu.umass.cs.iesl.inventor_disambiguation.coreference.InventorVars
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.PatentsViewRecord
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.ApplicationViewRecord
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference.InventorMention
 
 import scala.collection.mutable.ArrayBuffer
@@ -104,7 +104,7 @@ class EvaluateCoreference[P <: Comparable[P],C](algName: String, predicted: Iter
   }
   
   
-  def pairwiseHTMLReport(pairs: Iterable[(P,P)], lookup: P => PatentsViewRecord, title: String) = {
+  def pairwiseHTMLReport(pairs: Iterable[(P,P)], lookup: P => ApplicationViewRecord, title: String) = {
     
     val sb = new StringBuilder
     sb.append(s"<html>\n<body>\n")
@@ -118,16 +118,16 @@ class EvaluateCoreference[P <: Comparable[P],C](algName: String, predicted: Iter
     sb.append("</body></html>")
   }
   
-  def truePositivesReport(lookup: P => PatentsViewRecord) = 
+  def truePositivesReport(lookup: P => ApplicationViewRecord) =
     pairwiseHTMLReport(truePositives,lookup,"True Positives")
   
-  def falsePositivesReport(lookup: P => PatentsViewRecord) =
+  def falsePositivesReport(lookup: P => ApplicationViewRecord) =
     pairwiseHTMLReport(falsePositives,lookup,"False Positives")
 
-  def falseNegativesReport(lookup: P => PatentsViewRecord) =
+  def falseNegativesReport(lookup: P => ApplicationViewRecord) =
     pairwiseHTMLReport(falseNegatives,lookup,"False Negatives")
 
-  def errorAnalysis(lookup: P => PatentsViewRecord) = {
+  def errorAnalysis(lookup: P => ApplicationViewRecord) = {
     
     // Number of FPs where inventors have the same first and last name spellings (ignoring the middle)
     val FP_sameFirstAndLastNameSpelling = falsePositives.count{

@@ -48,8 +48,6 @@ object MongoQueryReport {
         m =>
           CaseInsensitiveReEvaluatingNameProcessor.process(m.self.value)
           m.coInventors.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
-          m.lawyers.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
-          m.assignees.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
           m
       }
     val html = mentions.map(_.toHTMLFormattedString)

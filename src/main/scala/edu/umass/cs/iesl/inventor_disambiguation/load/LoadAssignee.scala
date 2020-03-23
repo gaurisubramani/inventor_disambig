@@ -26,22 +26,14 @@ import edu.umass.cs.iesl.inventor_disambiguation._
 
 object LoadAssignee extends TabSeparatedFileLoader[Assignee] {
 
-
-  //"uuid","patent_id","rawlocation_id","type","name_first","name_last","organization","sequence"
   override def parse(split: Array[String]): Option[Assignee] = {
-    val uuid = split(0).clean().noneIfEmpty
-    val patentID = split(1).clean().noneIfEmpty
-    //TODO: Add this field to the Assignee class
-    //val assigneeID = split(2).clean().noneIfEmpty
-    val locID = split(3).clean().noneIfEmpty
-    val typ = split(4).noneIfNAorBlank.map(_.clean())
-    val first = split(5).noneIfNAorBlank.map(_.clean())
-    val last = split(6).noneIfNAorBlank.map(_.clean())
-    val org = split(7).noneIfNAorBlank.map(_.clean())
-    val seq = split(8).clean().noneIfEmpty
-    Some(new Assignee(uuid.get,patentID.get,locID.get,typ,first,last,org,seq.get))
+    val applicationNumber = split(0).clean().noneIfEmpty
+    val org = split(1).clean().noneIfEmpty
+    val uuid = split(2).clean().noneIfEmpty
+
+    Some(new Assignee(applicationNumber.get,org.get))
   }
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(9)
+  override def expectedLineLengths: Set[Int] = Set(3)
 }

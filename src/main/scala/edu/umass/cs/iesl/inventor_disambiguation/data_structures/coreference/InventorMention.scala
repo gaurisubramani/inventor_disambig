@@ -22,8 +22,7 @@ package edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference
 
 import edu.umass.cs.iesl.inventor_disambiguation.coreference.ReEvaluatingNameProcessor
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures._
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.citations.USPatentCitation
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{CPC, IPCR, NBER, USPC}
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{USPC}
 import edu.umass.cs.iesl.inventor_disambiguation.db.Datastore
 import edu.umass.cs.iesl.inventor_disambiguation._
 
@@ -34,9 +33,7 @@ import edu.umass.cs.iesl.inventor_disambiguation._
  * Like the other data structures in this project, the inventor mention is descent of the 
  * data type Cubbie (from factorie) which provides easy serialization to Mongo. 
  */
-class InventorMention extends PatentsViewRecord{
-
-  val uuid = new StringSlot("uuid")
+class InventorMention extends ApplicationViewRecord{
 
   val self = new CubbieSlot[Inventor]("self",() => new Inventor())
 
@@ -49,45 +46,23 @@ class InventorMention extends PatentsViewRecord{
   lazy val coInventorLastnames = coInventors.value.flatMap(_.nameLast.opt)
   lazy val coInventorLastnamesBag = coInventorLastnames.counts
 
-  val entityId = new StringSlot("entityId")
-  val goldEntityId = new StringSlot("goldEntityId")
-  
   // Other data about the patent itself
   
   // more than one app per patent
-  val applications = new CubbieListSlot[Application]("applications", () => new Application())
-  
   val assignees = new CubbieListSlot[Assignee]("assignees", () => new Assignee())
-  
-  val claims = new CubbieListSlot[Claim]("claims", () => new Claim())
   
   val lawyers = new CubbieListSlot[Lawyer]("lawyers", () => new Lawyer())
   
   // classifications
   
-  val cpc = new CubbieListSlot[CPC]("cpc", () => new CPC())
-  
-  val ipcr = new CubbieListSlot[IPCR]("ipcr", () => new IPCR())
-  
-  val nber = new CubbieListSlot[NBER]("nber", () => new NBER())
-
   val uspc = new CubbieListSlot[USPC]("uspc", () => new USPC())
   
   // Citations
   
-  val usPatentCitations = new CubbieListSlot[USPatentCitation]("uspatentcitations", () => new USPatentCitation())
-
-  lazy val isFirstInventor: Boolean = self.value.sequenceInt == 0
-
-  lazy val isLastInventor: Boolean = {
-    val maxIndex = coInventors.value.map(_.sequenceInt).maxBySafe(f => f)
-    maxIndex.isDefined && maxIndex.get < self.value.sequenceInt
-  }
-
   def this(self: Inventor, patent: Patent, coInventors: Seq[Inventor]) = {
     this()
     this.self.set(self)
-    this.uuid.set(self.inventorID.opt)
+    this.applicationNumber.set(self.applicationNumber.opt)
     this.patent.set(patent)
     this.coInventors.set(coInventors)
   }
@@ -100,10 +75,11 @@ object InventorMention {
 
   def fromDatastores(self: Inventor, patentDB: Datastore[String,Patent], inventorDB: Datastore[String,Inventor]): InventorMention = {
 
-    val patentID = self.patentID.value
-    val maybePatent = patentDB.get(patentID)
+    //GSTODO: Do we need ID on Inventor?  Or is Application Number enough?
+    val applicationNumber = self.applicationNumber.value
+    val maybePatent = patentDB.get(applicationNumber)
     if (maybePatent.isEmpty)
-      println(s"[${this.getClass.getSimpleName}] WARNING:  We must have a patent for the inventor ${self.uuid.value}, ${self.nameFirst.value}, ${self.nameLast.value} with patent ${self.patentID.value}")
+      println(s"[${this.getClass.getSimpleName}] WARNING:  We must have a patent for the inventor with application: ${self.applicationNumber.value}, ${self.nameFirst.value}, ${self.nameLast.value} with patent ${self.applicationNumber.value}")
     val mention = new InventorMention()
     mention.self.set(self)
 
@@ -111,51 +87,31 @@ object InventorMention {
     mention.rawName.set(new PersonNameRecord(self.nameFirst.opt,self.nameMiddles.opt,self.nameLast.opt,self.nameSuffixes.opt))
     ReEvaluatingNameProcessor.process(mention.rawName.value)
 
-    mention.uuid.set(self.inventorID.opt)
+    mention.applicationNumber.set(self.applicationNumber.opt)
     mention.patent.set(maybePatent.headOption)
-    val coInventors = inventorDB.get(patentID).filter(_.inventorID.value != self.inventorID.value)
+    val coInventors = inventorDB.get(applicationNumber).filter(_.applicationNumber.value != self.applicationNumber.value)
     mention.coInventors.set(coInventors.toSeq)
   }
 
   def fromDatastores(self: Inventor, patentDB: Datastore[String,Patent], inventorDB: Datastore[String,Inventor], uspcDB: Datastore[String,USPC]): InventorMention = {
     val mention = fromDatastores(self,patentDB,inventorDB)
-    mention.uspc.set(uspcDB.get(self.patentID.value).toList)
+    mention.uspc.set(uspcDB.get(self.applicationNumber.value).toList)
     mention
   }
 
 
   def fromDatastores(self: Inventor,
                      assigneeDB: Datastore[String,Assignee],
-                     cpcDB: Datastore[String,CPC],
                      inventorDB: Datastore[String,Inventor],
-                     ipcrDB: Datastore[String,IPCR],
                      lawyerDB: Datastore[String,Lawyer],
                      locationDB: Datastore[String, Location],
-                     nberDB: Datastore[String,NBER],
                      patentDB: Datastore[String,Patent],
                      uspcDB: Datastore[String,USPC]): InventorMention = {
 
     val mention = fromDatastores(self,patentDB,inventorDB)
-    mention.assignees.set(assigneeDB.get(self.patentID.value).toList)
-    mention.cpc.set(cpcDB.get(self.patentID.value).toList)
-    mention.ipcr.set(ipcrDB.get(self.patentID.value).toList)
-    mention.lawyers.set(lawyerDB.get(self.patentID.value).toList)
-
-    // Set the self inventor's location:
-    mention.self.value.rawLocationID.opt.foreach {
-      locId =>
-        mention.self.value.location.set(locationDB.get(locId).headOption)
-    }
-
-    // Set the co-inventor's locations:
-    mention.coInventors.value.foreach( inv => inv.rawLocationID.opt.foreach {
-      locId =>
-        inv.location.set(locationDB.get(locId).headOption)
-    })
-
-    mention.nber.set(nberDB.get(self.patentID.value).toList)
-    mention.cpc.set(cpcDB.get(self.patentID.value).toList)
-    mention.uspc.set(uspcDB.get(self.patentID.value).toList)
+    mention.assignees.set(assigneeDB.get(self.applicationNumber.value).toList)
+    mention.lawyers.set(lawyerDB.get(self.applicationNumber.value).toList)
+    mention.uspc.set(uspcDB.get(self.applicationNumber.value).toList)
     mention
   }
 

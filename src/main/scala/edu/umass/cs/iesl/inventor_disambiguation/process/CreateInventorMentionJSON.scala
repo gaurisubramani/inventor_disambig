@@ -22,7 +22,7 @@ package edu.umass.cs.iesl.inventor_disambiguation.process
 import java.io.{BufferedWriter, File, FileOutputStream, OutputStreamWriter}
 import java.util.zip.GZIPOutputStream
 
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.{CPC, IPCR, NBER, USPC}
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification.USPC
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference.InventorMention
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.{Assignee, Inventor, Lawyer, Patent}
 import edu.umass.cs.iesl.inventor_disambiguation.db.{CreateInventorMentionDBOpts, GeneralPatentDB, InventorMentionDB, LocationDB}
@@ -45,16 +45,8 @@ object CreateInventorMentionJSON {
       override def constructor(): Assignee = new Assignee()
     }
 
-    val cpcDB = new GeneralPatentDB[CPC](opts.hostname.value, opts.port.value, opts.dbname.value, opts.cpcCollectionName.value, true) {
-      override def constructor(): CPC = new CPC()
-    }
-
     val inventorDB = new GeneralPatentDB[Inventor](opts.hostname.value, opts.port.value, opts.dbname.value, opts.inventorCollectionName.value, true) {
       override def constructor(): Inventor = new Inventor()
-    }
-
-    val ipcrDB = new GeneralPatentDB[IPCR](opts.hostname.value, opts.port.value, opts.dbname.value, opts.ipcrCollectionName.value, true) {
-      override def constructor(): IPCR = new IPCR()
     }
 
     val lawyerDB = new GeneralPatentDB[Lawyer](opts.hostname.value, opts.port.value, opts.dbname.value, opts.lawyerCollectionName.value, true) {
@@ -62,10 +54,6 @@ object CreateInventorMentionJSON {
     }
 
     val locationDB = new LocationDB(opts.hostname.value, opts.port.value, opts.dbname.value, opts.locationCollectionName.value, true)
-
-    val nberDB = new GeneralPatentDB[NBER](opts.hostname.value, opts.port.value, opts.dbname.value, opts.nberCollectionName.value, true) {
-      override def constructor(): NBER = new NBER()
-    }
 
     val patentDB = new GeneralPatentDB[Patent](opts.hostname.value, opts.port.value, opts.dbname.value, opts.patentCollectionName.value, true) {
       override def constructor(): Patent = new Patent()
@@ -85,7 +73,7 @@ object CreateInventorMentionJSON {
     var count = 0
     inventorsPar.foreach(
       inventors => {
-        val inventorMentions = inventors.map(inventor => InventorMention.fromDatastores(inventor, assigneeDB, cpcDB, inventorDB, ipcrDB, lawyerDB, locationDB, nberDB, patentDB, uspcDB))
+        val inventorMentions = inventors.map(inventor => InventorMention.fromDatastores(inventor, assigneeDB, inventorDB, lawyerDB, locationDB, patentDB, uspcDB))
         inventorMentions.foreach{
           im =>
             if (count % 100 == 0)

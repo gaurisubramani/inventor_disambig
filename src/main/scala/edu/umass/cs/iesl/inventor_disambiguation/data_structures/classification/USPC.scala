@@ -20,29 +20,25 @@
 
 package edu.umass.cs.iesl.inventor_disambiguation.data_structures.classification
 
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.PatentsViewRecord
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.ApplicationViewRecord
 
 
-class USPC extends PatentsViewRecord {
-  
-  val uuid = StringSlot("uuid")
+class USPC extends ApplicationViewRecord {
+
   val mainclassID = StringSlot("mainClassID")
   val subclassID = StringSlot("subclassID")
-  val sequence = StringSlot("sequence")
-  
-  def this(uuid: String, patentID: String, mainclassID: String, subclassID: String, sequence: String) = {
+
+  def this(applicationNumber: String, mainclassID: String, subclassID: String) = {
     this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
+    this.applicationNumber.set(applicationNumber)
     this.mainclassID.set(mainclassID)
     this.subclassID.set(subclassID)
   }
 
 
-  def this(uuid: String, patentID: String, mainclassID: Option[String], subclassID: Option[String], sequence: String) = {
+  def this(applicationNumber: String, mainclassID: Option[String], subclassID: Option[String], sequence: String) = {
     this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
+    this.applicationNumber.set(applicationNumber)
     this.mainclassID.set(mainclassID)
     this.subclassID.set(subclassID)
   }

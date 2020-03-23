@@ -20,26 +20,14 @@
 
 package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
-class Assignee extends PatentsViewRecord with PersonName{
-  
-  val uuid = new StringSlot("uuid")
-  val rawLocationID = new StringSlot("rawLocationID") //TODO: Add Location object
-  val assigneeType = new  StringSlot("assigneeType")
+class Assignee extends ApplicationViewRecord {
+
   val organization = new StringSlot("organization")
-  val sequence= new StringSlot("sequence")
-  
-  
-  
-  def this(uuid: String, patentID: String, rawLocationID: String, assigneeType: Option[String], nameFirst: Option[String], nameLast: Option[String], organization: Option[String], sequence: String) = {
+
+  def this(applicationNumber: String, organization: String) = {
     this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
-    this.rawLocationID.set(rawLocationID)
-    this.assigneeType.set(assigneeType)
-    this.nameFirst.set(nameFirst)
-    this.nameLast.set(nameLast)
+    this.applicationNumber.set(applicationNumber)
     this.organization.set(organization)
-    this.sequence.set(sequence)
   }
 
 }

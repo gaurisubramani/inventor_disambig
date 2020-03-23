@@ -54,7 +54,7 @@ object GenerateTDGroundTruth {
   
   def getPointID(record: TDInventorRow) = record.id 
 
-  def getPointID(inventor: Inventor) = inventor.uuid.value
+  def getPointID(inventor: Inventor) = inventor.applicationNumber.value
 
   def main(args: Array[String]): Unit = {
     

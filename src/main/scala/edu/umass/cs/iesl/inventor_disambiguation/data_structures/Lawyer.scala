@@ -20,21 +20,31 @@
 
 package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
-class Lawyer extends PatentsViewRecord with PersonName{
-  
-  val uuid = StringSlot("uuid")
-  val sequence = StringSlot("sequence")
+class Lawyer extends ApplicationViewRecord{
+
   val country = StringSlot("country")
-  
-  
-  def this(uuid: String, patentID: String, sequence: String, nameFirst: Option[String], nameLast: Option[String], country: Option[String]) = {
+  val nameLine1 = StringSlot("nameLine1")
+  val nameLine2 = StringSlot("nameLine2")
+  val streetLine1 = StringSlot("streetLine1")
+  val streetLine2 = StringSlot("streetLine2")
+  val city = StringSlot("city")
+  val postalCode = StringSlot("postalCode")
+  val regionCode = StringSlot("regionCode")
+  val countryCode = StringSlot("countryCode")
+  val countryName = StringSlot("countryName")
+
+  def this(applicationNumber: String, nameLine1: String, nameLine2: String, streetLine1: String, streetLine2: String, city: String, postalCode: String, regionCode: String, countryCode: String, countryName: String) = {
     this()
-    this.uuid.set(uuid)
-    this.patentID.set(patentID)
-    this.sequence.set(sequence)
-    this.nameFirst.set(nameFirst)
-    this.nameLast.set(nameLast)
-    this.country.set(country)
+    this.applicationNumber.set(applicationNumber)
+    this.nameLine1.set(nameLine1)
+    this.nameLine2.set(nameLine2)
+    this.streetLine1.set(streetLine1)
+    this.streetLine2.set(streetLine2)
+    this.city.set(city)
+    this.postalCode.set(postalCode)
+    this.regionCode.set(regionCode)
+    this.countryCode.set(countryCode)
+    this.countryName.set(countryName)
   }
 }
 

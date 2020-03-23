@@ -23,7 +23,7 @@ package edu.umass.cs.iesl.inventor_disambiguation.db
 import java.io.File
 
 import edu.umass.cs.iesl.inventor_disambiguation._
-import edu.umass.cs.iesl.inventor_disambiguation.data_structures.PatentsViewRecord
+import edu.umass.cs.iesl.inventor_disambiguation.data_structures.ApplicationViewRecord
 import edu.umass.cs.iesl.inventor_disambiguation.load.Loaders
 
 /**
@@ -36,7 +36,7 @@ import edu.umass.cs.iesl.inventor_disambiguation.load.Loaders
  * @param enforceIndices whether or not the specified indices should be enforced
  * @tparam T the type parameter, the datatype of the record stored in the database
  */
-abstract class GeneralPatentDB[T <: PatentsViewRecord] (override val hostname: String, override val  port: Int, override val  dbname: String, override val  collectionName: String, override val enforceIndices: Boolean)
+abstract class GeneralPatentDB[T <: ApplicationViewRecord] (override val hostname: String, override val  port: Int, override val  dbname: String, override val  collectionName: String, override val enforceIndices: Boolean)
   extends MongoDatastore[T] 
   with Datastore[String,T] {
 
@@ -45,7 +45,7 @@ abstract class GeneralPatentDB[T <: PatentsViewRecord] (override val hostname: S
    * @param cubbie
    * @return
    */
-  override def indices(cubbie: T): Seq[Seq[T#AbstractSlot[Any]]] = Seq(Seq(cubbie.patentID))
+  override def indices(cubbie: T): Seq[Seq[T#AbstractSlot[Any]]] = Seq(Seq(cubbie.applicationNumber))
 
   /**
    * The maximum number of database tuples to return* 
@@ -58,7 +58,7 @@ abstract class GeneralPatentDB[T <: PatentsViewRecord] (override val hostname: S
    * @return the values
    */
   override def get(key: String): Iterable[T] = {
-    val res = db.query(q => q.patentID.set(key)).limit(queryLimit).toIterable
+    val res = db.query(q => q.applicationNumber.set(key)).limit(queryLimit).toIterable
     if (res.size == queryLimit)
       println(s"[${this.getClass.conventionalName}] WARNING: Query limit has been met for $key")
     res
@@ -94,8 +94,8 @@ object PopulateGeneralPatentDB {
     val loader = Loaders(opts.dataType.value)
 
     // Start up the DB instance
-    val db = new GeneralPatentDB[PatentsViewRecord](opts.hostname.value,opts.port.value,opts.dbname.value,opts.collectionName.value,false) {
-      override def constructor(): PatentsViewRecord = new PatentsViewRecord()
+    val db = new GeneralPatentDB[ApplicationViewRecord](opts.hostname.value,opts.port.value,opts.dbname.value,opts.collectionName.value,false) {
+      override def constructor(): ApplicationViewRecord = new ApplicationViewRecord()
     }
     
     // Add the records in parallel to the database.

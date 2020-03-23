@@ -96,15 +96,13 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
       m =>
         CaseInsensitiveReEvaluatingNameProcessor.process(m.self.value)
         m.coInventors.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
-        m.lawyers.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
-        m.assignees.opt.map(_.foreach(CaseInsensitiveReEvaluatingNameProcessor.process))
         m
     }
 
   /**
    * mapping of mentions by their id numbers 
    */
-  lazy val mentionIndex = mentions.groupBy(_.uuid.value).mapValues(_.head)
+  lazy val mentionIndex = mentions.groupBy(_.applicationNumber.value).mapValues(_.head)
   
   override def getMention(id: String): InventorMention = mentionIndex(id)
 
@@ -131,18 +129,16 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     val middleNames = new BagOfWordsVariable()
     mention.self.value.nameMiddles.opt.foreach(ms => ms.foreach(m => m.trimBegEnd().noneIfEmpty.foreach(middleNames.add(_)(new DiffList))))
 
+    // last names here
+    val lastNames = new BagOfWordsVariable()
+    mention.self.value.nameLast.opt.foreach(f => f.trimBegEnd().noneIfEmpty.foreach(firstNames.add(_)(null)))
+
+
     // topics = embedding of title
     val topics = new DenseDoubleBagVariable()
     val titleWords = mention.patent.opt.map(_.title.opt.map(_.alphanumericAndSpacesOnly.split(" ")).getOrElse(Array())).getOrElse(Array())
     if (titleWords.length > 0)
       topics.add(keystore.generateVector(titleWords))(new DiffList)
-
-    val locations = new BagOfWordsVariable()
-    mention.self.value.location.opt.map(l => {
-      if (l.city.opt.isDefined || l.state.isDefined)
-        locations.add((l.city.opt ++ l.state.opt ++ l.country.opt).mkString(","))(new DiffList)
-    })
-
 
     // coinventors
     val coinventors = new BagOfWordsVariable()
@@ -156,7 +152,7 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     val assignees = new BagOfWordsVariable()
     mention.assignees.opt.foreach(_.foreach {
       assignee =>
-        val name = (assignee.nameLast.opt ++ assignee.nameFirst.opt).mkString(" ").trimBegEnd().noneIfEmpty
+        val name = Seq(assignee.name).mkString(" ").trimBegEnd().noneIfEmpty
         name.foreach(assignees.add(_)(null))
         assignee.organization.opt.foreach(f => f.trimBegEnd().noneIfEmpty.foreach(assignees.add(_)(new DiffList)))
     })
@@ -165,7 +161,7 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     val lawyers = new BagOfWordsVariable()
     mention.lawyers.opt.foreach(_.foreach {
       lawyer =>
-        val name = (lawyer.nameLast.opt ++ lawyer.nameFirst.opt).mkString(" ").trimBegEnd().noneIfEmpty
+        val name = (lawyer.nameLine1.opt ++ lawyer.nameLine2.opt).mkString(" ").trimBegEnd().noneIfEmpty
         name.foreach(lawyers.add(_)(null))
     })
 
@@ -175,38 +171,34 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
         (label.mainclassID.opt ++ label.subclassID.opt).mkString("").noneIfEmpty.foreach(uspcs.add(_)(new DiffList))
     })
 
-
-    val ipcrs = new BagOfWordsVariable()
-    mention.ipcr.opt.foreach(_.foreach {
-      label =>
-        (label.classificationLevel.opt ++ label.section.opt ++ label.ipcClass.opt).mkString("").noneIfEmpty.foreach(ipcrs.add(_)(new DiffList))
-    })
-
-    val cpcs = new BagOfWordsVariable()
-    mention.cpc.opt.foreach(_.foreach {
-      label =>
-        (label.sectionID.opt ++ label.subsectionID.opt).mkString("").noneIfEmpty.foreach(cpcs.add(_)(new DiffList))
-    })
-
-    val nbers = new BagOfWordsVariable()
-    mention.nber.opt.foreach(_.foreach {
-      label =>
-        label.categoryID.opt.foreach(x => nbers.add(x)(new DiffList))
-        label.subcategoryID.opt.foreach(x => nbers.add(x)(new DiffList))
-    })
-
-
     // canopy
     val canopy = determineCanopy(mention.self.value)
 
-    val vars = new InventorVars(firstNames,middleNames,new BagOfWordsVariable(),locations,new BagOfWordsVariable(),new BagOfWordsVariable(),new BagOfWordsVariable(),new BagOfWordsVariable(),new BagOfWordsVariable(),new BagOfWordsVariable(),new BagOfWordsVariable(),topics,new BagOfWordsVariable(),coinventors,assignees,new BagOfWordsVariable(),lawyers,new BagOfWordsVariable(),cpcs,ipcrs,uspcs,nbers,canopy,new BagOfWordsVariable())
-    val m = new Mention[InventorVars](vars,mention.uuid.value)(new DiffList)
+    val vars = new InventorVars(firstNames,middleNames,lastNames,
+      locations = new BagOfWordsVariable(),
+      applicationIds = new BagOfWordsVariable(),
+      applicationTypes = new BagOfWordsVariable(),
+      applicationCountry = new BagOfWordsVariable(),
+      dates = new BagOfWordsVariable(),
+      patentCountry = new BagOfWordsVariable(),
+      patentTypes = new BagOfWordsVariable(),
+      new BagOfWordsVariable(),
+      topics,
+      coinventors,
+      assignees,
+      new BagOfWordsVariable(),
+      lawyers,
+      new BagOfWordsVariable(),
+      uspcs,
+      canopy,
+      new BagOfWordsVariable())
+    val m = new Mention[InventorVars](vars,mention.applicationNumber.value)(new DiffList)
     m.variables.provenance = Some(mention)
     m
   }
   
   def addEntityLabels() =
-    inventorVarMentions.foreach(m => mentionIndex(m.uniqueId).entityId.set(m.root.uniqueId))
+    inventorVarMentions.foreach(m => mentionIndex(m.uniqueId).applicationNumber.set(m.root.uniqueId))
 
 }
 

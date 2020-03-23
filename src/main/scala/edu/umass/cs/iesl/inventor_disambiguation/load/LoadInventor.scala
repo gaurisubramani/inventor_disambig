@@ -25,20 +25,16 @@ import edu.umass.cs.iesl.inventor_disambiguation._
 object LoadInventor extends TabSeparatedFileLoader[Inventor] {
   override def parse(split: Array[String]): Option[Inventor] = {
 
-    val cleaned = split.map(_.clean().noneIfNAorBlank)
-    
-    val uuid = cleaned(0).get
-    val patentID = cleaned(1).get
-    //val null = cleaned(2)
-    val locID = cleaned(3)
-    val nameFirst = cleaned(4)
-    val nameLast = cleaned(5)
-    val sequence = cleaned(6).get
-    
-    Some(new Inventor(uuid,patentID,locID,nameFirst,nameLast,sequence))
+    val cleaned = split.map(_.clean())
+    val applicationNumber = cleaned(0)
+    val nameFirst = cleaned(1)
+    val nameMiddle = cleaned(2)
+    val nameLast = cleaned(3)
+
+    Some(new Inventor(applicationNumber, nameFirst, nameMiddle, nameLast))
   }
 
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(7)
+  override def expectedLineLengths: Set[Int] = Set(5)
 }

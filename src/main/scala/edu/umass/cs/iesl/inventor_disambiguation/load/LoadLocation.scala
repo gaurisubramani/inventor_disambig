@@ -25,16 +25,11 @@ import edu.umass.cs.iesl.inventor_disambiguation._
 
 object LoadLocation extends TabSeparatedFileLoader[Location]{
   override def parse(split: Array[String]): Option[Location] = {
-    //"id","city","state","country"
-    val uuid = split(0).removeQuotes().noneIfEmpty.get
-    // val null = split(1)
-    val city = split(2).clean().noneIfNAorBlank
-    val state = split(3).clean().noneIfNAorBlank
-    val country = split(4).clean().noneIfNAorBlank
-    if (city.isDefined || state.isDefined || country.isDefined)
-      Some(new Location(uuid,city,state,country))
-    else
-      None
+    val applicationNumber = split(0).clean().noneIfNAorBlank.get
+    val state = split(1).clean()
+    val countryCode = split(2).clean()
+    val countryName = split(3).clean()
+    Some(new Location(applicationNumber, state, countryCode, countryName))
   }
 
   override def skipFirstLine: Boolean = true

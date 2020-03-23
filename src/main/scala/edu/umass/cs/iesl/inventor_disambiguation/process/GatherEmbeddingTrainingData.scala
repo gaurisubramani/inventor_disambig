@@ -52,7 +52,7 @@ object GatherEmbeddingTrainingData {
 
   }
   
-  def trainingData(patents: Iterator[Patent]) = patents.map(p => (p.title.opt ++ p.patentAbstract.opt).mkString(" ").trim)
+  def trainingData(patents: Iterator[Patent]) = patents.map(p => (p.title.opt).mkString(" ").trim)
   
   def writeTrainingData(data: Iterator[String], writer: Writer) = 
     data.foreach(d => {writer.write(d); writer.write("\n"); writer.flush()})
