@@ -53,7 +53,7 @@ class InventorMentionDB(override val hostname: String,
    * @param cubbie
    * @return
    */
-  override def indices(cubbie: InventorMention): Seq[Seq[InventorMention#AbstractSlot[Any]]] = Seq(Seq(cubbie.applicationNumber))
+  override def indices(cubbie: InventorMention): Seq[Seq[InventorMention#AbstractSlot[Any]]] = Seq(Seq(cubbie.mentionID))
 
   /**
    * One might have multiple indices on this table, for this reason, the class itself does not implement the datastore method
@@ -63,7 +63,7 @@ class InventorMentionDB(override val hostname: String,
    */
   def toDatastoreByUUID = new Datastore[String,InventorMention] {
     override def get(key: String): Iterable[InventorMention] = {
-      db.query(q => q.applicationNumber.set(key)).limit(1).toIterable
+      db.query(q => q.mentionID.set(key)).limit(1).toIterable
     }
   }
 }

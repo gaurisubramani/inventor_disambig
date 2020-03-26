@@ -37,18 +37,18 @@ object InventorCorefModel {
     if(opts.bagMiddleWeight.value != 0.0)inventorCorefModel += new SizeLimitingEntityNameTemplate(opts.bagMiddleInitialWeight.value,opts.bagMiddleNameWeight.value,opts.bagMiddleWeight.value,opts.bagMiddleSaturation.value,opts.bagMiddleNoNamePenalty.value,opts.bagMiddleSizeLimit.value,opts.bagMiddleExceedSizeLimitPenalty.value, {b:InventorVars => b.middleNames}, "middle initial")
     if(opts.bagFirstNoNamePenalty.value != 0.0)inventorCorefModel += new EmptyBagPenalty(opts.bagFirstNoNamePenalty.value, {b:InventorVars => b.firstNames}, "first initial")
     if(opts.bagMiddleNoNamePenalty.value != 0.0)inventorCorefModel += new EmptyBagPenalty(opts.bagMiddleNoNamePenalty.value, {b:InventorVars => b.middleNames}, "middle initial")
-    
-    // coInventor 
+
+    // coInventor
     if(opts.bagCoInventorWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagCoInventorWeight.value,opts.bagCoInventorShift.value, {b:InventorVars => b.coInventors}, "coInventors")
     if(opts.bagCoInventorEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagCoInventorEntropy.value, {b:InventorVars => b.coInventors}, "coInventors")
     if(opts.bagCoInventorPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagCoInventorPrior.value, {b:InventorVars => b.coInventors}, "coInventors")
-    
-    
+
+
     // locations
     if(opts.bagLocationsEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagLocationsEntropy.value, {b:InventorVars => b.locations}, "locations")
     if(opts.bagLocationsWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagLocationsWeight.value,opts.bagLocationsShift.value, {b:InventorVars => b.locations}, "locations")
     if(opts.bagLocationsPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagLocationsPrior.value, {b:InventorVars => b.locations}, "locations")
-    
+
     // Title Emb
     if(opts.entitySizeWeight.value != 0.0)inventorCorefModel += new EntitySizePrior(opts.entitySizeWeight.value,opts.entitySizeExponent.value)
     if(opts.bagTopicsWeight.value != 0.0)inventorCorefModel += new DenseCosineDistance(opts.bagTopicsWeight.value,opts.bagTopicsShift.value, {b:InventorVars => b.titleEmb}, "title embedding")
@@ -65,7 +65,7 @@ object InventorCorefModel {
     if(opts.bagAssigneesWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagAssigneesWeight.value,opts.bagAssigneesShift.value, {b:InventorVars => b.assignees}, "Assignees")
     if(opts.bagAssigneesEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagAssigneesEntropy.value, {b:InventorVars => b.assignees}, "Assignees")
     if(opts.bagAssigneesPrior.value != 0.0)inventorCorefModel += new BagOfWordsSizePrior(opts.bagAssigneesPrior.value, {b:InventorVars => b.assignees}, "Assignees")
-    
+
     // Lawyers
     if(opts.bagLawyersWeight.value != 0.0)inventorCorefModel += new ChildParentCosineDistance(opts.bagLawyersWeight.value,opts.bagLawyersShift.value, {b:InventorVars => b.lawyers}, "Lawyers")
     if(opts.bagLawyersEntropy.value != 0.0)inventorCorefModel += new BagOfWordsEntropy(opts.bagLawyersEntropy.value, {b:InventorVars => b.lawyers}, "Lawyers")

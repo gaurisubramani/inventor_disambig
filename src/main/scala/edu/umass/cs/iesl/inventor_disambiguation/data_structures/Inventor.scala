@@ -20,14 +20,18 @@
 
 package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
+//GSTODO do we have to consider sequence?  Look at use of sequence in old code
 class Inventor extends ApplicationViewRecord with PersonName {
 
-  def this(applicationNumber: String, nameFirst: String, nameMiddles: String, nameLast: String) = {
+  val inventorID = StringSlot("inventor_id")
+
+  def this(uuid: String, applicationNumber: String, nameFirst: String, nameMiddles: String, nameLast: String) = {
     this()
     this.applicationNumber.set(applicationNumber)
     this.nameFirst.set(nameFirst)
     this.nameMiddles.set(Seq(nameMiddles))
     this.nameLast.set(nameLast)
+    this.inventorID.set(uuid)
   }
 
   def debugString() = Iterable(this.applicationNumber.opt.getOrElse("*NULL*"),this.nameLast.opt.getOrElse("*NULL*"),this.nameFirst.opt.getOrElse("*NULL*"),this.nameMiddles.opt.getOrElse(Seq()).mkString(" "),this.nameSuffixes.opt.getOrElse(Seq()).mkString(" ")).mkString("\t")

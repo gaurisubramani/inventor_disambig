@@ -36,6 +36,7 @@ object RemoveUnusedFields {
 
   def reduce(im: InventorMention) = {
     val reduced = new InventorMention()
+    reduced.mentionID.set(im.mentionID.value)
     reduced.applicationNumber.set(im.applicationNumber.value)
     reduced.assignees.set(im.assignees.opt.getOrElse(Seq()).map(a => reduceAssignee(a)))
     reduced.coInventors.set(im.coInventors.opt.getOrElse(Seq()).map(c => reduceCoInventor(c)))
@@ -48,6 +49,7 @@ object RemoveUnusedFields {
 
   def reduceAssignee(a: Assignee) = {
     val reduced = new Assignee()
+    reduced.uuid.set(a.uuid.opt)
     reduced.organization.set(a.organization.opt)
     reduced
   }
@@ -62,6 +64,7 @@ object RemoveUnusedFields {
   def reduceLawyer(lawyer: Lawyer) = {
     val reduced = new Lawyer()
 
+    reduced.uuid.set(lawyer.uuid.opt)
     reduced.country.set(lawyer.country.opt)
     reduced.nameLine1.set(lawyer.nameLine1.opt)
     reduced.nameLine2.set(lawyer.nameLine2.opt)
@@ -77,12 +80,14 @@ object RemoveUnusedFields {
 
   def reducePatent(patent: Patent) = {
     val reduced = new Patent()
+    reduced.applicationNumber.set(patent.applicationNumber.opt)
     reduced.title.set(patent.title.opt)
     reduced
   }
 
   def reduceSelf(self: Inventor) = {
     val reduced = new Inventor()
+    reduced.inventorID.set(self.inventorID.opt)
     reduced.applicationNumber.set(self.applicationNumber.opt)
     reduced.nameFirst.set(self.nameFirst.opt)
     reduced.nameLast.set(self.nameLast.opt)
@@ -92,6 +97,7 @@ object RemoveUnusedFields {
 
   def reduceLocation(location: Location) = {
     val reduced = new Location()
+    reduced.locationID.set(location.locationID.opt)
     reduced.state.set(location.state.opt)
     reduced.countryCode.set(location.countryCode.opt)
     reduced.countryName.set(location.countryName.opt)
@@ -100,6 +106,7 @@ object RemoveUnusedFields {
 
   def reduceUSPC(uspc: USPC) = {
     val reduced = new USPC()
+    reduced.uuid.set(uspc.uuid.opt)
     reduced.mainclassID.set(uspc.mainclassID.opt)
     reduced.subclassID.set(uspc.subclassID.opt)
     reduced

@@ -35,6 +35,8 @@ import edu.umass.cs.iesl.inventor_disambiguation._
  */
 class InventorMention extends ApplicationViewRecord{
 
+  val mentionID = new StringSlot("mention_id")
+
   val self = new CubbieSlot[Inventor]("self",() => new Inventor())
 
   // The inventors original name
@@ -46,21 +48,24 @@ class InventorMention extends ApplicationViewRecord{
   lazy val coInventorLastnames = coInventors.value.flatMap(_.nameLast.opt)
   lazy val coInventorLastnamesBag = coInventorLastnames.counts
 
+  val entityId = new StringSlot("entityId")
+
   // Other data about the patent itself
-  
+
   // more than one app per patent
   val assignees = new CubbieListSlot[Assignee]("assignees", () => new Assignee())
-  
+
   val lawyers = new CubbieListSlot[Lawyer]("lawyers", () => new Lawyer())
-  
+
   // classifications
-  
+
   val uspc = new CubbieListSlot[USPC]("uspc", () => new USPC())
-  
+
   // Citations
-  
+
   def this(self: Inventor, patent: Patent, coInventors: Seq[Inventor]) = {
     this()
+    this.mentionID.set(self.inventorID.value)
     this.self.set(self)
     this.applicationNumber.set(self.applicationNumber.opt)
     this.patent.set(patent)
@@ -75,7 +80,6 @@ object InventorMention {
 
   def fromDatastores(self: Inventor, patentDB: Datastore[String,Patent], inventorDB: Datastore[String,Inventor]): InventorMention = {
 
-    //GSTODO: Do we need ID on Inventor?  Or is Application Number enough?
     val applicationNumber = self.applicationNumber.value
     val maybePatent = patentDB.get(applicationNumber)
     if (maybePatent.isEmpty)
@@ -87,9 +91,11 @@ object InventorMention {
     mention.rawName.set(new PersonNameRecord(self.nameFirst.opt,self.nameMiddles.opt,self.nameLast.opt,self.nameSuffixes.opt))
     ReEvaluatingNameProcessor.process(mention.rawName.value)
 
-    mention.applicationNumber.set(self.applicationNumber.opt)
+    mention.mentionID.set(self.inventorID.value)
     mention.patent.set(maybePatent.headOption)
-    val coInventors = inventorDB.get(applicationNumber).filter(_.applicationNumber.value != self.applicationNumber.value)
+
+    // GSTODO figure out coinventors
+    val coInventors = inventorDB.get(applicationNumber).filter(_.inventorID.value != self.inventorID.value)
     mention.coInventors.set(coInventors.toSeq)
   }
 

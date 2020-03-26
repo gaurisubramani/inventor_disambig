@@ -52,7 +52,7 @@ object GenerateCorefTaskFile {
     @volatile var maps = new ArrayBuffer[Map[String,Iterable[String]]]()
     LoadInventor.loadMultiple(file, codec, numThreads).par.foreach {
       map =>
-        val r = assignmentMap(canopyAssignments(map.filter(p => ids.isEmpty || ids.contains(p.applicationNumber.value)), assignment,nameProcessor))
+        val r = assignmentMap(canopyAssignments(map.filter(p => ids.isEmpty || ids.contains(p.inventorID.value)), assignment,nameProcessor))
         maps += r
     }
     mergeMaps(maps)
@@ -62,14 +62,16 @@ object GenerateCorefTaskFile {
     val pw = new PrintWriter(file, "UTF-8")
     map.foreach{
       case (name,ids) =>
-        pw.println(CorefTask(name,ids).toString)
+        pw.println(
+          CorefTask(name,ids).toString)
+
         pw.flush() 
     }
     pw.close()
   }
 
   def canopyAssignments(inventors: Iterator[Inventor], assignment: Inventor => String,nameProcessor: NameProcessor) = {
-    inventors.map(f => { nameProcessor.process(f); (assignment(f),f.applicationNumber.value)})
+    inventors.map(f => { nameProcessor.process(f); (assignment(f),f.inventorID.value)})
   } 
   
   def assignmentMap(assignments: Iterator[(String,String)]) =
@@ -117,7 +119,7 @@ object GenerateCorefTaskFileJSON {
             val canopy = new String(assignment(m))
             if (!subMap.contains(canopy))
               subMap.put(canopy,new ArrayBuffer[String]())
-            subMap(canopy) += new String(m.applicationNumber.value)
+            subMap(canopy) += new String(m.mentionID.value)
             count += 1
             if (count % 100000 == 0) {
               synchronized {

@@ -22,19 +22,21 @@ package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
 class Location extends ApplicationViewRecord {
 
+  val locationID = new StringSlot("locationID")
   val state = new StringSlot("state")
   val countryCode = new StringSlot("countryCode")
   val countryName = new StringSlot("countryName")
 
-  def this(applicationNumber: String, state: String, countryCode: String, countryName: String) = {
+  def this(locationID: String, applicationNumber: String, state: String, countryCode: String, countryName: String) = {
     this()
+    this.locationID.set(locationID)
     this.applicationNumber.set(applicationNumber)
     this.countryCode.set(countryCode)
     this.countryName.set(countryName)
     this.state.set(state)
   }
   
-  def debugString() = Seq(applicationNumber, countryCode, countryName, state).mkString(" ")
+  def debugString() = Seq(applicationNumber, locationID, countryCode, countryName, state).mkString(" ")
 }
 
 object Location extends Location

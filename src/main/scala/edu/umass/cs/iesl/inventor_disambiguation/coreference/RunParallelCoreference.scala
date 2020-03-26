@@ -138,7 +138,7 @@ object RunParallelMultiCanopyCoreferenceInMemory {
     val inventorMentions = LoadJSONInventorMentions.load(new File(opts.inputJson.value),opts.codec.value)
 
     // Create a hashmap of the inventor mentions by id
-    val ds = InMemoryPrimaryKeyDatastore.fromIterator(inventorMentions.map(im => (im.applicationNumber.value,im)))
+    val ds = InMemoryPrimaryKeyDatastore.fromIterator(inventorMentions.map(im => (im.mentionID.value,im)))
 
     // The lookup table containing the embeddings.
     val keystore = InMemoryKeystore.fromFile(new File(opts.keystorePath.value),opts.keystoreDim.value,opts.keystoreDelim.value,opts.codec.value)

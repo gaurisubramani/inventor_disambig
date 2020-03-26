@@ -22,6 +22,7 @@ package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 
 class Lawyer extends ApplicationViewRecord{
 
+  val uuid = StringSlot("uuid")
   val country = StringSlot("country")
   val nameLine1 = StringSlot("nameLine1")
   val nameLine2 = StringSlot("nameLine2")
@@ -33,8 +34,9 @@ class Lawyer extends ApplicationViewRecord{
   val countryCode = StringSlot("countryCode")
   val countryName = StringSlot("countryName")
 
-  def this(applicationNumber: String, nameLine1: String, nameLine2: String, streetLine1: String, streetLine2: String, city: String, postalCode: String, regionCode: String, countryCode: String, countryName: String) = {
+  def this(uuid: String, applicationNumber: String, nameLine1: String, nameLine2: String, streetLine1: String, streetLine2: String, city: String, postalCode: String, regionCode: String, countryCode: String, countryName: String) = {
     this()
+    this.uuid.set(uuid)
     this.applicationNumber.set(applicationNumber)
     this.nameLine1.set(nameLine1)
     this.nameLine2.set(nameLine2)

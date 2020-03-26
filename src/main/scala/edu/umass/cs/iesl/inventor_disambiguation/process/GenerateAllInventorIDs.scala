@@ -31,6 +31,6 @@ object GenerateAllInventorIDs {
   def fromFile(file: File, codec: String = "UTF-8", numThreads: Int = 10): Seq[String] =
     LoadInventor.loadMultiple(file,codec,numThreads).map(fromIterator).flatten.toSeq
 
-  def fromIterator(inventors: Iterator[Inventor]) = inventors.map(_.applicationNumber.value)
+  def fromIterator(inventors: Iterator[Inventor]) = inventors.map(_.inventorID.value)
 
 }

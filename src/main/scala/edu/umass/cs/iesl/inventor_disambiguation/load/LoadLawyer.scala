@@ -36,8 +36,9 @@ object LoadLawyer extends TabSeparatedFileLoader[Lawyer]{
     val regionCode = split(7).clean()
     val countryCode = split(8).clean()
     val countryName = split(9).clean()
+    val uuid = split(10).clean()
 
-    Some(new Lawyer(applicationNumber, nameLine1, nameLine2, streetLine1, streetLine2, city, postalCode, regionCode, countryCode, countryName))
+    Some(new Lawyer(uuid, applicationNumber, nameLine1, nameLine2, streetLine1, streetLine2, city, postalCode, regionCode, countryCode, countryName))
   }
 
   override def skipFirstLine: Boolean = true

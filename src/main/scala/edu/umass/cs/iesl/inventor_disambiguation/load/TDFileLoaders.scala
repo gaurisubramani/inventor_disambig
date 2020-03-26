@@ -57,12 +57,16 @@ object LoadTDInventor extends CommaSeparateFileLoader[Inventor] {
 
 object LoadTDClass extends CommaSeparateFileLoader[USPC] {
 
+  private var idx = 0
+
   override def parse(split: Array[String]): Option[USPC] = {
     //patent_number,mainclass_id,subclass_id
     val uspc = new USPC()
+    uspc.uuid.set(idx.toString)
     uspc.applicationNumber.set(split(0))
     uspc.mainclassID.set(split(1))
     uspc.subclassID.set(split(2))
+    idx += 1
     Some(uspc)
   }
 

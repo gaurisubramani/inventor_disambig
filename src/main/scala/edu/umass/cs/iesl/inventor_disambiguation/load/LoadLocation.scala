@@ -29,7 +29,8 @@ object LoadLocation extends TabSeparatedFileLoader[Location]{
     val state = split(1).clean()
     val countryCode = split(2).clean()
     val countryName = split(3).clean()
-    Some(new Location(applicationNumber, state, countryCode, countryName))
+    val uuid = split(4).clean()
+    Some(new Location(uuid, applicationNumber, state, countryCode, countryName))
   }
 
   override def skipFirstLine: Boolean = true

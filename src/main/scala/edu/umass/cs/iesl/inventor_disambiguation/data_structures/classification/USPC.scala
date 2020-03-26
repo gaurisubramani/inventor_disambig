@@ -25,19 +25,22 @@ import edu.umass.cs.iesl.inventor_disambiguation.data_structures.ApplicationView
 
 class USPC extends ApplicationViewRecord {
 
+  val uuid = StringSlot("uuid")
   val mainclassID = StringSlot("mainClassID")
   val subclassID = StringSlot("subclassID")
 
-  def this(applicationNumber: String, mainclassID: String, subclassID: String) = {
+  def this(uuid: String, applicationNumber: String, mainclassID: String, subclassID: String) = {
     this()
+    this.uuid.set(uuid)
     this.applicationNumber.set(applicationNumber)
     this.mainclassID.set(mainclassID)
     this.subclassID.set(subclassID)
   }
 
 
-  def this(applicationNumber: String, mainclassID: Option[String], subclassID: Option[String], sequence: String) = {
+  def this(uuid: String, applicationNumber: String, mainclassID: Option[String], subclassID: Option[String], sequence: String) = {
     this()
+    this.uuid.set(uuid)
     this.applicationNumber.set(applicationNumber)
     this.mainclassID.set(mainclassID)
     this.subclassID.set(subclassID)

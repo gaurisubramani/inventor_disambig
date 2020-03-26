@@ -27,11 +27,12 @@ object LoadInventor extends TabSeparatedFileLoader[Inventor] {
 
     val cleaned = split.map(_.clean())
     val applicationNumber = cleaned(0)
-    val nameFirst = cleaned(1)
-    val nameMiddle = cleaned(2)
-    val nameLast = cleaned(3)
+    val nameFirst = cleaned(1).toUpperCase
+    val nameMiddle = cleaned(2).toUpperCase
+    val nameLast = cleaned(3).toUpperCase
+    val uuid = cleaned(4)
 
-    Some(new Inventor(applicationNumber, nameFirst, nameMiddle, nameLast))
+    Some(new Inventor(uuid, applicationNumber, nameFirst, nameMiddle, nameLast))
   }
 
   override def skipFirstLine: Boolean = true

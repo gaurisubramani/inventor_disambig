@@ -30,7 +30,8 @@ object LoadUSPC extends TabSeparatedFileLoader[USPC]{
     val applicationNumber = split(0).clean().noneIfNAorBlank.get
     val mainClass = split(1).clean()
     val subclassId = split(2).clean()
-    Some(new USPC(applicationNumber, mainClass, subclassId))
+    val uuid = split(2).clean()
+    Some(new USPC(uuid, applicationNumber, mainClass, subclassId))
   }
 
   override def skipFirstLine: Boolean = true

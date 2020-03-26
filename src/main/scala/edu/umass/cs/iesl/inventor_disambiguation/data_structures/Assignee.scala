@@ -23,9 +23,11 @@ package edu.umass.cs.iesl.inventor_disambiguation.data_structures
 class Assignee extends ApplicationViewRecord {
 
   val organization = new StringSlot("organization")
+  val uuid = new StringSlot("uuid")
 
-  def this(applicationNumber: String, organization: String) = {
+  def this(uuid: String, applicationNumber: String, organization: String) = {
     this()
+    this.uuid.set(uuid)
     this.applicationNumber.set(applicationNumber)
     this.organization.set(organization)
   }

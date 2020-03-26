@@ -31,7 +31,7 @@ object LoadAssignee extends TabSeparatedFileLoader[Assignee] {
     val org = split(1).clean().noneIfEmpty
     val uuid = split(2).clean().noneIfEmpty
 
-    Some(new Assignee(applicationNumber.get,org.get))
+    Some(new Assignee(uuid.get, applicationNumber.get, org.get))
   }
   override def skipFirstLine: Boolean = true
 

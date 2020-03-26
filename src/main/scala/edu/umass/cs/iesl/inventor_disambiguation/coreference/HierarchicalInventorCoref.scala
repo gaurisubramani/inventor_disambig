@@ -89,7 +89,7 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
 
 
   /**
-   * Apply the name processing pipeline  
+   * Apply the name processing pipeline
    */
   override val mentions =
     rawMentions.map {
@@ -100,27 +100,28 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     }
 
   /**
-   * mapping of mentions by their id numbers 
+   * mapping of mentions by their id numbers
    */
-  lazy val mentionIndex = mentions.groupBy(_.applicationNumber.value).mapValues(_.head)
-  
+  lazy val mentionIndex = mentions.groupBy(_.mentionID.value).mapValues(_.head)
+
   override def getMention(id: String): InventorMention = mentionIndex(id)
 
   /**
-   * Convert the mentions into the datatype, InventorVars 
+   * Convert the mentions into the datatype, InventorVars
    */
   lazy val inventorVarMentions = mentions.map(toMentionInventorVars)
-  
-  override lazy val predictedClustering: Iterable[(String, String)] = inventorVarMentions.map(f => (f.uniqueId,f.entity.uniqueId))
+
+  override lazy val predictedClustering: Iterable[(String, String)] = inventorVarMentions.map(f => (f.uniqueId, f.entity.uniqueId))
 
   def determineCanopy(inventor: Inventor): String = Canopies.lastNameAndFirstThreeCharsCaseInsensitive(inventor)
 
-  /**
-   * Given a single mention, convert it into the InventorVars BoW and embedding format for input into the disambiguation algorithm 
-   * @param mention
-   * @return
-   */
-  def toMentionInventorVars(mention: InventorMention) =  {
+   /**
+    * Given a single mention, convert it into the InventorVars BoW and embedding format for input into the disambiguation algorithm
+    *
+    * @param mention
+    * @return
+    */
+   def toMentionInventorVars(mention: InventorMention) = {
     // First names
     val firstNames = new BagOfWordsVariable()
     mention.self.value.nameFirst.opt.foreach(f => f.trimBegEnd().noneIfEmpty.foreach(firstNames.add(_)(null)))
@@ -174,7 +175,7 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     // canopy
     val canopy = determineCanopy(mention.self.value)
 
-    val vars = new InventorVars(firstNames,middleNames,lastNames,
+    val vars = new InventorVars(firstNames, middleNames, lastNames,
       locations = new BagOfWordsVariable(),
       applicationIds = new BagOfWordsVariable(),
       applicationTypes = new BagOfWordsVariable(),
@@ -192,13 +193,13 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
       uspcs,
       canopy,
       new BagOfWordsVariable())
-    val m = new Mention[InventorVars](vars,mention.applicationNumber.value)(new DiffList)
+    val m = new Mention[InventorVars](vars, mention.mentionID.value)(new DiffList)
     m.variables.provenance = Some(mention)
     m
   }
-  
+
   def addEntityLabels() =
-    inventorVarMentions.foreach(m => mentionIndex(m.uniqueId).applicationNumber.set(m.root.uniqueId))
+    inventorVarMentions.foreach(m => mentionIndex(m.uniqueId).entityId.set(m.root.uniqueId))
 
 }
 
