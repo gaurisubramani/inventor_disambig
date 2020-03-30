@@ -21,7 +21,7 @@
 package edu.umass.cs.iesl.inventor_disambiguation.coreference
 
 import cc.factorie.app.nlp.hcoref._
-import cc.factorie.variable.{DenseDoubleBagVariable, DiffList, BagOfWordsVariable}
+import cc.factorie.variable.{BagOfWordsVariable, DenseDoubleBagVariable, DiffList}
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.Inventor
 import edu.umass.cs.iesl.inventor_disambiguation.data_structures.coreference.InventorMention
 import edu.umass.cs.iesl.inventor_disambiguation._
@@ -68,6 +68,7 @@ class MultiCanopyInventorCorefSystem(opts: InventorModelOptions,override val men
     with InventorCorefMoveGenerator[InventorVars]
     with CorefWatch[InventorVars]
     with DebugCoref[InventorVars]  with PrintlnLogger{
+    temperature = 1
     def autoStopThreshold = 10000
     def newInstance(implicit d: DiffList) = new Node[InventorVars](new InventorVars)
   }
@@ -129,12 +130,6 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     // middle names here
     val middleNames = new BagOfWordsVariable()
     mention.self.value.nameMiddles.opt.foreach(ms => ms.foreach(m => m.trimBegEnd().noneIfEmpty.foreach(middleNames.add(_)(new DiffList))))
-
-    // last names here
-    val lastNames = new BagOfWordsVariable()
-    mention.self.value.nameLast.opt.foreach(f => f.trimBegEnd().noneIfEmpty.foreach(firstNames.add(_)(null)))
-
-
     // topics = embedding of title
     val topics = new DenseDoubleBagVariable()
     val titleWords = mention.patent.opt.map(_.title.opt.map(_.alphanumericAndSpacesOnly.split(" ")).getOrElse(Array())).getOrElse(Array())
@@ -175,7 +170,7 @@ abstract class HierarchicalInventorCorefRunner(opts: InventorModelOptions, keyst
     // canopy
     val canopy = determineCanopy(mention.self.value)
 
-    val vars = new InventorVars(firstNames, middleNames, lastNames,
+    val vars = new InventorVars(firstNames, middleNames, new BagOfWordsVariable(),
       locations = new BagOfWordsVariable(),
       applicationIds = new BagOfWordsVariable(),
       applicationTypes = new BagOfWordsVariable(),
