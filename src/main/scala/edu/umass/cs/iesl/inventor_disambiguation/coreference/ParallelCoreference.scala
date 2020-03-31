@@ -101,7 +101,7 @@ trait ParallelCoreference {
     mentions.groupBy(_.entityId.value).map(f => {
       val (firstName, middleName, lastName, suffix) = determineNames(f._2, 0.8, 0.8)
       f._2.map(m => {
-        BasicCorefOutputRecord(m.mentionID.value, m.self.value.inventorID.value, m.entityId.value, firstName, middleName, lastName, suffix)
+        BasicCorefOutputRecord(m.mentionID.value, m.entityId.value, firstName, middleName, lastName, suffix, m.patent.value.title.value)
       })
     }).flatten
   }
@@ -252,17 +252,16 @@ trait CorefOutputRecord
 
 
 case class BasicCorefOutputRecord(mentionId: String,
-                                  oneBasedMentionId: String,
-                                  rawInventorId: String,
                                   rawDisambiguatedId: String,
                                   firstName: String,
                                   middleName: String,
                                   lastName: String,
-                                  suffixes: String) extends CorefOutputRecord {
+                                  suffixes: String,
+                                  title: String) extends CorefOutputRecord {
 
   var disambiguatedId = rawDisambiguatedId
 
-  override def toString = s"$mentionId\t$oneBasedMentionId\t$rawInventorId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes"
+  override def toString = s"$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$title"
 }
 
 object BasicCorefOutputRecord {
@@ -275,8 +274,9 @@ object BasicCorefOutputRecord {
             firstName: String,
             middleName: String,
             lastName: String,
-            suffixes: String): BasicCorefOutputRecord = {
-    BasicCorefOutputRecord(mentionId, mentionId, rawInventorId, rawDisambiguatedId, firstName, middleName, lastName, suffixes)
+            suffixes: String,
+            title: String): BasicCorefOutputRecord = {
+    BasicCorefOutputRecord(mentionId, rawDisambiguatedId, firstName, middleName, lastName, suffixes, title)
   }
 }
 
@@ -285,24 +285,19 @@ object CorefOutputWriterHelper {
 
   def sortedNormalizedResults(results: Iterable[BasicCorefOutputRecord], convertToOneBased: Boolean = true): Iterable[BasicCorefOutputRecord] = {
 
-    val getMentionId = if (convertToOneBased)
-      (r: BasicCorefOutputRecord) => r.oneBasedMentionId
-    else
-      (r: BasicCorefOutputRecord) => r.mentionId
-
     // 1. Create the entity id map
     // The output format is to have the disambiguated ID be the mention
     // id of the first record in the cluster
-    val sortedResults = results.toSeq.sortBy(f => getMentionId(f))
+    val sortedResults = results.toSeq.sortBy(f => f.mentionId)
     val entityIdMap = new util.HashMap[String, String](100000).asScala
     sortedResults.foreach {
       case r: BasicCorefOutputRecord =>
         if (!entityIdMap.contains(r.rawDisambiguatedId)) {
-          println(s"New disambiguation: ${r.rawDisambiguatedId}, ${r.rawInventorId}")
-          entityIdMap.put(r.rawDisambiguatedId, getMentionId(r))
-        } else if (entityIdMap(r.rawDisambiguatedId) > getMentionId(r)) {
-          println(s"Found repeated disambiguation: ${r.rawDisambiguatedId}, ${r.rawInventorId}")
-          entityIdMap.put(r.rawDisambiguatedId, getMentionId(r))
+          println(s"New disambiguation: ${r.rawDisambiguatedId}, ${r.mentionId}")
+          entityIdMap.put(r.rawDisambiguatedId, r.mentionId)
+        } else if (entityIdMap(r.rawDisambiguatedId) > r.mentionId) {
+          println(s"Found repeated disambiguation: ${r.rawDisambiguatedId}, ${r.mentionId}")
+          entityIdMap.put(r.rawDisambiguatedId, r.mentionId)
         }
     }
     // 2.  Sort the inventor ids
