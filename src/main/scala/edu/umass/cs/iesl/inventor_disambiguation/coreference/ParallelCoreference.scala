@@ -264,23 +264,6 @@ case class BasicCorefOutputRecord(mentionId: String,
   override def toString = s"$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$title"
 }
 
-object BasicCorefOutputRecord {
-
-  //GSTODO: what is the correct mentionId here?  Use to be mentionId {val Array(patentId,seq) = mentionId.split("-"); s"$patentId-${seq.toInt+1}"}
-  //GSTODO: what is inventorId vs rawInventorId?  What is disambiguatedId?
-  def apply(mentionId: String,
-            rawInventorId: String,
-            rawDisambiguatedId: String,
-            firstName: String,
-            middleName: String,
-            lastName: String,
-            suffixes: String,
-            title: String): BasicCorefOutputRecord = {
-    BasicCorefOutputRecord(mentionId, rawDisambiguatedId, firstName, middleName, lastName, suffixes, title)
-  }
-}
-
-
 object CorefOutputWriterHelper {
 
   def sortedNormalizedResults(results: Iterable[BasicCorefOutputRecord], convertToOneBased: Boolean = true): Iterable[BasicCorefOutputRecord] = {
