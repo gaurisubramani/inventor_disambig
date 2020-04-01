@@ -101,7 +101,8 @@ trait ParallelCoreference {
     mentions.groupBy(_.entityId.value).map(f => {
       val (firstName, middleName, lastName, suffix) = determineNames(f._2, 0.8, 0.8)
       f._2.map(m => {
-        BasicCorefOutputRecord(m.mentionID.value, m.entityId.value, firstName, middleName, lastName, suffix, m.patent.value.title.value)
+        val state = m.location.value.state.value
+        BasicCorefOutputRecord(m.mentionID.value, m.entityId.value, firstName, middleName, lastName, suffix, state, m.patent.value.title.value)
       })
     }).flatten
   }
@@ -257,11 +258,12 @@ case class BasicCorefOutputRecord(mentionId: String,
                                   middleName: String,
                                   lastName: String,
                                   suffixes: String,
+                                  state: String,
                                   title: String) extends CorefOutputRecord {
 
   var disambiguatedId = rawDisambiguatedId
 
-  override def toString = s"$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$title"
+  override def toString = s"$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$state\t$title"
 }
 
 object CorefOutputWriterHelper {

@@ -51,26 +51,22 @@ class InventorMention extends ApplicationViewRecord{
   val entityId = new StringSlot("entityId")
 
   // Other data about the patent itself
-
-  // more than one app per patent
   val assignees = new CubbieListSlot[Assignee]("assignees", () => new Assignee())
 
   val lawyers = new CubbieListSlot[Lawyer]("lawyers", () => new Lawyer())
 
-  // classifications
-
   val uspc = new CubbieListSlot[USPC]("uspc", () => new USPC())
 
-  // Citations
+  val location = new CubbieSlot[Location]("location", () => new Location())
 
-  def this(self: Inventor, patent: Patent, coInventors: Seq[Inventor]) = {
-    this()
-    this.mentionID.set(self.inventorID.value)
-    this.self.set(self)
-    this.applicationNumber.set(self.applicationNumber.opt)
-    this.patent.set(patent)
-    this.coInventors.set(coInventors)
-  }
+//  def this(self: Inventor, patent: Patent, coInventors: Seq[Inventor]) = {
+//    this()
+//    this.mentionID.set(self.inventorID.value)
+//    this.self.set(self)
+//    this.applicationNumber.set(self.applicationNumber.opt)
+//    this.patent.set(patent)
+//    this.coInventors.set(coInventors)
+//  }
 }
 
 /**
@@ -78,12 +74,17 @@ class InventorMention extends ApplicationViewRecord{
  */
 object InventorMention {
 
-  def fromDatastores(self: Inventor, patentDB: Datastore[String,Patent], inventorDB: Datastore[String,Inventor]): InventorMention = {
+  def fromDatastores(self: Inventor,
+                     assigneeDB: Datastore[String,Assignee],
+                     inventorDB: Datastore[String,Inventor],
+                     lawyerDB: Datastore[String,Lawyer],
+                     locationDB: Datastore[String, Location],
+                     patentDB: Datastore[String,Patent],
+                     uspcDB: Datastore[String,USPC]): InventorMention = {
 
     val applicationNumber = self.applicationNumber.value
     val maybePatent = patentDB.get(applicationNumber)
-    if (maybePatent.isEmpty)
-      println(s"[${this.getClass.getSimpleName}] WARNING:  We must have a patent for the inventor with application: ${self.applicationNumber.value}, ${self.nameFirst.value}, ${self.nameLast.value} with patent ${self.applicationNumber.value}")
+    if (maybePatent.isEmpty) println(s"[${this.getClass.getSimpleName}] WARNING:  We must have a patent for the inventor with application: ${self.applicationNumber.value}, ${self.nameFirst.value}, ${self.nameLast.value} with patent ${self.applicationNumber.value}")
     val mention = new InventorMention()
     mention.self.set(self)
 
@@ -94,33 +95,14 @@ object InventorMention {
     mention.mentionID.set(self.inventorID.value)
     mention.patent.set(maybePatent.headOption)
 
-    // GSTODO figure out coinventors
     val coInventors = inventorDB.get(applicationNumber).filter(_.inventorID.value != self.inventorID.value)
     mention.coInventors.set(coInventors.toSeq)
-  }
 
-  def fromDatastores(self: Inventor, patentDB: Datastore[String,Patent], inventorDB: Datastore[String,Inventor], uspcDB: Datastore[String,USPC]): InventorMention = {
-    val mention = fromDatastores(self,patentDB,inventorDB)
-    mention.uspc.set(uspcDB.get(self.applicationNumber.value).toList)
-    mention
-  }
-
-
-  def fromDatastores(self: Inventor,
-                     assigneeDB: Datastore[String,Assignee],
-                     inventorDB: Datastore[String,Inventor],
-                     lawyerDB: Datastore[String,Lawyer],
-                     locationDB: Datastore[String, Location],
-                     patentDB: Datastore[String,Patent],
-                     uspcDB: Datastore[String,USPC]): InventorMention = {
-
-    val mention = fromDatastores(self,patentDB,inventorDB)
     mention.assignees.set(assigneeDB.get(self.applicationNumber.value).toList)
     mention.lawyers.set(lawyerDB.get(self.applicationNumber.value).toList)
     mention.uspc.set(uspcDB.get(self.applicationNumber.value).toList)
     mention
   }
-
 }
 
 
