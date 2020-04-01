@@ -124,7 +124,9 @@ object CreateInventorMentionDB {
       override def constructor(): Lawyer = new Lawyer()
     }
 
-    val locationDB = new LocationDB(opts.hostname.value, opts.port.value, opts.dbname.value, opts.locationCollectionName.value, true)
+    val locationDB = new GeneralPatentDB[Location](opts.hostname.value, opts.port.value, opts.dbname.value, opts.locationCollectionName.value, true) {
+      override def constructor(): Location = new Location()
+    }
 
     val patentDB = new GeneralPatentDB[Patent](opts.hostname.value, opts.port.value, opts.dbname.value, opts.patentCollectionName.value, true) {
       override def constructor(): Patent = new Patent()

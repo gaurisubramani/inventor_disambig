@@ -9,7 +9,7 @@ START=$(date +%s)
 $command --config=config/db/CreateAssignee.config --num-threads=20
 $command --config=config/db/CreateInventor.config --num-threads=20
 $command --config=config/db/CreateLawyer.config --num-threads=20
-java -Xmx20G -cp $jarpath edu.umass.cs.iesl.inventor_disambiguation.db.PopulateLocationDB --config=config/db/CreateLocation.config --num-threads=20
+$command --config=config/db/CreateLocation.config --num-threads=20
 $command --config=config/db/CreatePatent.config --num-threads=20
 $command --config=config/db/CreateUSPC.config --num-threads=20
 

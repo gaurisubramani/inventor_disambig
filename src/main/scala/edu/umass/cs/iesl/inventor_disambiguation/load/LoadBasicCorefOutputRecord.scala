@@ -38,14 +38,14 @@ object LoadBasicCorefOutputRecord extends TabSeparatedFileLoader[BasicCorefOutpu
    * @return
    */
   override def parse(split: Array[String]): Option[BasicCorefOutputRecord] = {
-    Some(BasicCorefOutputRecord(split(0),split(1),split(2),split(3),split(4),split(5),split(6),split(7)))
+    Some(BasicCorefOutputRecord(split(0),split(1),split(2),split(3),split(4),split(5),split(6),split(7),split(8),split(9)))
   }
 
   /**
    * The line lengths (in terms of elements after the split) that are acceptable for the loader. 
    * @return
    */
-  override def expectedLineLengths: Set[Int] = Set(8)
+  override def expectedLineLengths: Set[Int] = Set(10)
 
   printMessages = false
 }

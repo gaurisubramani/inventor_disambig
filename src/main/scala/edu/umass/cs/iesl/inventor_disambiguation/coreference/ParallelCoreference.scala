@@ -102,7 +102,7 @@ trait ParallelCoreference {
       val (firstName, middleName, lastName, suffix) = determineNames(f._2, 0.8, 0.8)
       f._2.map(m => {
         val state = m.location.value.state.value
-        BasicCorefOutputRecord(m.mentionID.value, m.entityId.value, firstName, middleName, lastName, suffix, state, m.patent.value.title.value)
+        BasicCorefOutputRecord(m.patent.value.applicationNumber.value, m.mentionID.value, m.entityId.value, firstName, middleName, lastName, suffix, state, m.patent.value.filingDate.value, m.patent.value.title.value)
       })
     }).flatten
   }
@@ -252,18 +252,20 @@ trait CorefOutputWriter[OutputRecord <: CorefOutputRecord] {
 trait CorefOutputRecord
 
 
-case class BasicCorefOutputRecord(mentionId: String,
+case class BasicCorefOutputRecord(applicationNumber: String,
+                                  mentionId: String,
                                   rawDisambiguatedId: String,
                                   firstName: String,
                                   middleName: String,
                                   lastName: String,
                                   suffixes: String,
                                   state: String,
+                                  filingDate: String,
                                   title: String) extends CorefOutputRecord {
 
   var disambiguatedId = rawDisambiguatedId
 
-  override def toString = s"$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$state\t$title"
+  override def toString = s"$applicationNumber\t$mentionId\t$disambiguatedId\t$firstName\t$middleName\t$lastName\t$suffixes\t$state\t$filingDate\t$title"
 }
 
 object CorefOutputWriterHelper {

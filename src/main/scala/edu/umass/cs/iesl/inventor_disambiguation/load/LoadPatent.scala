@@ -13,7 +13,7 @@
     http://www.apache.org/licenses/LICENSE-2.0
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   WITHOUT WARRANTIES OR CONDITIOØNS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License. */
 
@@ -25,9 +25,9 @@ import edu.umass.cs.iesl.inventor_disambiguation._
 
 object LoadPatent extends TabSeparatedFileLoader[Patent]{
   override def parse(split: Array[String]): Option[Patent] =
-    Some(new Patent(split(0).clean(),split(1).clean()))
+    Some(new Patent(split(0).clean(),split(1).clean(),split(3).clean()))
 
   override def skipFirstLine: Boolean = true
 
-  override def expectedLineLengths: Set[Int] = Set(3)
+  override def expectedLineLengths: Set[Int] = Set(4)
 }

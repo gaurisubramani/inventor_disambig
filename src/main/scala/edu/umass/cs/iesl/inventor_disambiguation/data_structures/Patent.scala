@@ -26,14 +26,16 @@ import edu.umass.cs.iesl.inventor_disambiguation._
 class Patent extends ApplicationViewRecord {
 
   val title = StringSlot("title")
+  val filingDate = StringSlot("filing_date")
 
   lazy val tokenizedTitleWithoutStopwords: Iterable[String] = title.opt.map(_.removePunctuation.split(" ").toIndexedSeq.filterNot(StopWords.containsWord)).getOrElse(Iterable[String]())
   lazy val tokenizedTitleWithoutStopwordsCounts = tokenizedTitleWithoutStopwords.counts
 
-  def this(applicationNumber: String, title: String) = {
+  def this(applicationNumber: String, title: String, filingDate: String) = {
     this()
     this.applicationNumber.set(applicationNumber)
     this.title.set(title)
+    this.filingDate.set(filingDate)
  }
 
 }

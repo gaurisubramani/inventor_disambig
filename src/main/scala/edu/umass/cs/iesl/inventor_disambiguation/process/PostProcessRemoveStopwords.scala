@@ -37,7 +37,7 @@ class PostProcessRemoveStopwordsOpts extends DefaultCmdOptions {
 object PostProcessRemoveStopwords {
 
   def removeStopwords(record: BasicCorefOutputRecord): BasicCorefOutputRecord = {
-    BasicCorefOutputRecord(record.mentionId,record.rawDisambiguatedId,record.firstName,record.middleName,record.lastName,InventorNameStopWords.removeStopwords(record.suffixes),record.state,record.title)
+    BasicCorefOutputRecord(record.applicationNumber,record.mentionId,record.rawDisambiguatedId,record.firstName,record.middleName,record.lastName,InventorNameStopWords.removeStopwords(record.suffixes),record.state,record.filingDate,record.title)
   }
 
   def removeStopwords(records: Iterator[BasicCorefOutputRecord]): Iterator[BasicCorefOutputRecord] = records.map(removeStopwords)

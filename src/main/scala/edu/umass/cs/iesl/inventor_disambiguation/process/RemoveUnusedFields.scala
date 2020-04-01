@@ -44,6 +44,7 @@ object RemoveUnusedFields {
     reduced.patent.set(reducePatent(im.patent.value))
     reduced.self.set(reduceSelf(im.self.value))
     reduced.uspc.set(im.uspc.opt.getOrElse(Seq()).map(n => reduceUSPC(n)))
+    reduced.location.set(im.location.value)
     reduced
   }
 

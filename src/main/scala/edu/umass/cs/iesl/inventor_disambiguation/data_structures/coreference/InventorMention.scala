@@ -101,6 +101,8 @@ object InventorMention {
     mention.assignees.set(assigneeDB.get(self.applicationNumber.value).toList)
     mention.lawyers.set(lawyerDB.get(self.applicationNumber.value).toList)
     mention.uspc.set(uspcDB.get(self.applicationNumber.value).toList)
+    mention.location.set(locationDB.get(self.applicationNumber.value).headOption)
+
     mention
   }
 }
