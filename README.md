@@ -30,8 +30,6 @@ time ./scripts/coref/run_disambiguation.sh config/coref/RunConfig.config config/
 ./scripts/process/post-process-remove-stopwords.sh data/multi-canopy-output/all-results.txt data/multi-canopy-output/all-results.txt.post-processed
 ```
 
-Please email me Nicholas Monath (first dot last at gmail dot com) if you'd like the embedding file used in these experiments.
-
 ## Building the Code ##
 
 Build using maven:
