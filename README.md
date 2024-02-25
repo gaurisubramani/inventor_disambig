@@ -1,7 +1,9 @@
-Inventor Disambiguation
+Inventor Disambiguation (patent applicants)
 ========================
 
-This project is for the coreference of patent inventor names used in the PatentsView database. This was the best performing system in the 2015 Inventor Disambiguation Workshop. The method performs clustering using a fast hierarchical method. Due to variety of data and the algorithm's sensitivity to such changes, the model feature template parameters may need to be tuned for new data sets. To tune these parameters, if you have a development set, please consider using grid searches over candidate values that you believe to be reasonable. Also, I recommend picking cases from your development set to inspect by hand to understand system performance and looking at an error analysis of the results is recommended. If you have questions or would like to discuss this more, please contact Nicholas Monath (first dot last at gmail dot com).
+This project disambiguates individual inventors across their patent applicantions (both granted and ungranted applications). This project is branched from the coreference model for patent grantees (https://github.com/iesl/inventor-disambiguation). 
+
+Build instructions are below:
 
 
 ## Overview ##
@@ -405,4 +407,4 @@ def handleTask(task: CorefTask): Unit = {
 
 ## Contact ##
 
-Questions, bugs, suggestions -- please email Nicholas Monath (first dot last at gmail dot com)
+Please email Gauri Subramani (gsubramani@lehigh.edu)
