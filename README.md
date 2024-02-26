@@ -82,12 +82,31 @@ The following section provides a step-by-step guide to running the disambiguatio
 
 #### Downloading the raw data ####
 
-Download the following PatentsView data files and place the following data files in the ```data``` directory:
+%Download the following PatentsView data files and place the following data files in the ```data``` directory:
 
-```
-cpc_current.csv
-ipcr.csv
-nber.csv
+Download the following .dta files from the 2014 data export from USPTO’s Patent Examination Research Dataset (PatEx) (https://www.uspto.gov/ip-policy/economic-research/research-datasets/patent-examination-research-dataset-public-pair) and place them in the ```data``` directory:
+
+application_data.dta
+all_inventors.dta
+correspondence_address.dta
+
+
+Download the following .dta files from the 2014 data export of USPTO’s Patent Assignment Dataset (https://www.uspto.gov/ip-policy/economic-research/research-datasets/patent-assignment-dataset) and place them in the ```data``` directory:
+
+assignee.dta
+documentid_admin.dta
+
+Then, run the `disambiguation_full_gen.do' file in Stata to generate the input files for this disambiguation. That code generates the following files:
+
+patent_full.tsv
+rawassignee_full.tsv
+rawinventor_full.tsv
+rawlocation_full.tsv
+rawlawyer_full.tsv
+uspc_current_full.tsv
+\\\\
+
+application.csv
 patent.csv
 rawassignee.csv
 rawinventor.csv
